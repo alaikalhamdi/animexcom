@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grid-Based Map</title>
+    <style>
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 1px;
+        }
+        .grid-item {
+            width: 50px;
+            height: 50px;
+            background-color: lightgray;
+            border: 1px solid #ccc;
+        }
+        .highlight {
+            background-color: lightblue !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="grid-container"></div>
+    <div class="controls">
+        <button onclick="addUnit()">Add Unit</button>
+        <button onclick="removeUnit()">Remove Unit</button>
+        <button onclick="resetGrid()">Reset Grid</button>
+    </div>
+    <script>
+        const gridContainer = document.querySelector('.grid-container');
+
+        // Generate 100 grid items
+        for (let i = 0; i < 100; i++) {
+            const gridItem = document.createElement('div');
+            gridItem.classList.add('grid-item');
+            gridContainer.appendChild(gridItem);
+        }
+
+        let selectedUnit = null;
+        let turn = 0;
+        const moveLimit = 3;
+
+        document.querySelectorAll('.grid-item').forEach(item => {
+            item.addEventListener('click', () => {
+                console.log('Grid item clicked:', item);
+                try {
+                    if (selectedUnit) {
+                        moveUnit(selectedUnit, item);
+                        selectedUnit = null;
+                        nextTurn(); // Go to next turn after moving a unit
+                    } else {
+                        selectUnit(item);
+                    }
+                } catch (error) {
+                    console.error('Error moving unit:', error);
+                }
+            });
+
+            item.addEventListener('mouseover', () => {
+                if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy')) {
+                    item.style.backgroundColor = 'lightblue';
+                }
+            });
+
+            item.addEventListener('mouseout', () => {
+                if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy')) {
+                    item.style.backgroundColor = 'lightgray';
+                }
+            });
+        });
+
+        function selectUnit(item) {
+            if (item.classList.contains('unit')) {
+                selectedUnit = item;
+                item.style.backgroundColor = 'yellow';
+                console.log('Unit selected:', item);
+                highlightMoves(item);
+            }
+        }
+
+        function moveUnit(unit, target) {
+            if (!target.classList.contains('unit') && target.classList.contains('highlight')) {
+                target.classList.add('unit');
+                target.style.backgroundColor = 'blue';
+                unit.classList.remove('unit');
+                unit.style.backgroundColor = 'lightgray';
+                console.log('Unit moved from', unit, 'to', target);
+                clearHighlights();
+            } else {
+                throw new Error('Invalid move');
+            }
+        }
+
+        function addUnit() {
+            const emptyCells = document.querySelectorAll('.grid-item:not(.unit)');
+            if (emptyCells.length > 0) {
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                randomCell.classList.add('unit');
+                randomCell.style.backgroundColor = 'blue';
+                console.log('Unit added at', randomCell);
+            }
+        }
+
+        function removeUnit() {
+            const units = document.querySelectorAll('.grid-item.unit');
+            if (units.length > 0) {
+                const randomUnit = units[Math.floor(Math.random() * units.length)];
+                randomUnit.classList.remove('unit');
+                randomUnit.style.backgroundColor = 'lightgray';
+                console.log('Unit removed from', randomUnit);
+            }
+        }
+
+        function resetGrid() {
+            document.querySelectorAll('.grid-item').forEach(item => {
+                item.classList.remove('unit');
+                item.classList.remove('enemy');
+                item.style.backgroundColor = 'lightgray';
+            });
+            turn = 0;
+            console.log('Grid reset');
+            addEnemy(1); // Add an enemy after resetting the grid
+        }
+
+        function moveEnemies() {
+            const units = document.querySelectorAll('.grid-item.unit');
+            const enemies = document.querySelectorAll('.grid-item.enemy');
+
+            enemies.forEach(enemy => {
+                let closestUnit = null;
+                let closestDistance = Infinity;
+
+                units.forEach(unit => {
+                    const distance = Math.abs(getCellIndex(enemy) % 10 - getCellIndex(unit) % 10) + Math.abs(Math.floor(getCellIndex(enemy) / 10) - Math.floor(getCellIndex(unit) / 10));
+                    if (distance < closestDistance) {
+                        closestDistance = distance;
+                        closestUnit = unit;
+                    }
+                });
+
+                if (closestUnit) {
+                    const enemyIndex = getCellIndex(enemy);
+                    const unitIndex = getCellIndex(closestUnit);
+                    const enemyRow = Math.floor(enemyIndex / 10);
+                    const enemyCol = enemyIndex % 10;
+                    const unitRow = Math.floor(unitIndex / 10);
+                    const unitCol = unitIndex % 10;
+
+                    let newRow = enemyRow;
+                    let newCol = enemyCol;
+
+                    if (enemyRow < unitRow) newRow++;
+                    else if (enemyRow > unitRow) newRow--;
+
+                    if (enemyCol < unitCol) newCol++;
+                    else if (enemyCol > unitCol) newCol--;
+
+                    const newCell = document.querySelector(`.grid-container > div:nth-child(${newRow * 10 + newCol + 1})`);
+                    if (!newCell.classList.contains('unit') && !newCell.classList.contains('enemy')) {
+                        newCell.classList.add('enemy');
+                        newCell.style.backgroundColor = 'red';
+                        enemy.classList.remove('enemy');
+                        enemy.style.backgroundColor = 'lightgray';
+                        console.log('Enemy moved from', enemy, 'to', newCell);
+                    }
+                }
+            });
+        }
+
+        function addEnemy(amount = 1) {
+            for (let i = 0; i < amount; i++) {
+            const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy)');
+            if (emptyCells.length > 0) {
+                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                randomCell.classList.add('enemy');
+                randomCell.style.backgroundColor = 'red';
+                console.log('Enemy added at', randomCell);
+            }
+            }
+        }
+
+        function nextTurn() {
+            turn++;
+            console.log('Turn', turn);
+            moveEnemies();
+        }
+
+        function getCellIndex(cell) {
+            return Array.from(cell.parentNode.children).indexOf(cell);
+        }
+
+        function highlightMoves(unit) {
+            clearHighlights();
+            const unitIndex = getCellIndex(unit);
+            const unitRow = Math.floor(unitIndex / 10);
+            const unitCol = unitIndex % 10;
+
+            for (let row = unitRow - moveLimit; row <= unitRow + moveLimit; row++) {
+                for (let col = unitCol - moveLimit; col <= unitCol + moveLimit; col++) {
+                    if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+                        const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
+                        if (distance <= moveLimit) {
+                            const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
+                            if (!cell.classList.contains('unit') && !cell.classList.contains('enemy')) {
+                                cell.classList.add('highlight');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        function clearHighlights() {
+            document.querySelectorAll('.grid-item.highlight').forEach(item => {
+                item.classList.remove('highlight');
+            });
+        }
+
+        addEnemy(1);
+    </script>
+</body>
+</html>
