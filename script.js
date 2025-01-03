@@ -7,6 +7,21 @@ for (let i = 0; i < 100; i++) {
     gridContainer.appendChild(gridItem);
 }
 
+// Add obstacles
+function addObstacles(amount = 10) {
+    const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle)');
+    for (let i = 0; i < amount; i++) {
+        if (emptyCells.length > 0) {
+            const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            randomCell.classList.add('obstacle');
+            randomCell.style.backgroundColor = 'black';
+            console.log('Obstacle added at', randomCell);
+        }
+    }
+}
+
+addObstacles();
+
 let selectedUnit = null;
 let turn = 0;
 const moveLimit = 3;
@@ -37,13 +52,13 @@ document.querySelectorAll('.grid-item').forEach(item => {
     });
 
     item.addEventListener('mouseover', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy')) {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
             item.style.backgroundColor = 'lightblue';
         }
     });
 
     item.addEventListener('mouseout', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy')) {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
             item.style.backgroundColor = 'lightgray';
         }
     });
@@ -60,7 +75,7 @@ function selectUnit(item) {
 }
 
 function moveUnit(unit, target) {
-    if (!target.classList.contains('unit') && target.classList.contains('highlight')) {
+    if (!target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
         target.classList.add('unit');
         target.style.backgroundColor = 'blue';
         unit.classList.remove('unit');
@@ -133,15 +148,19 @@ function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
         item.classList.remove('unit');
         item.classList.remove('enemy');
+        item.classList.remove('obstacle');
         item.style.backgroundColor = 'lightgray';
         removeHealthBar(item);
     });
     turn = 0;
     totalUnits = 0;
     unitsMoved = 0;
+    selectedUnit = null; // Reset selected unit
     updateTurnDisplay();
     updateUnitsLeftDisplay();
+    clearHighlights();
     console.log('Grid reset');
+    addObstacles(); // Regenerate obstacles
     addEnemy(1); // Add an enemy after resetting the grid
 }
 
@@ -181,7 +200,7 @@ function moveEnemies() {
             const newCell = document.querySelector(`.grid-container > div:nth-child(${newRow * 10 + newCol + 1})`);
             if (newCell.classList.contains('unit')) {
                 attackUnit(enemy, newCell);
-            } else if (!newCell.classList.contains('enemy')) {
+            } else if (!newCell.classList.contains('enemy') && !newCell.classList.contains('obstacle')) {
                 newCell.classList.add('enemy');
                 newCell.style.backgroundColor = 'red';
                 newCell.setAttribute('data-health', enemy.getAttribute('data-health'));
@@ -250,7 +269,7 @@ function highlightMoves(unit) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
                 if (distance <= moveLimit) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
-                    if (!cell.classList.contains('unit') && !cell.classList.contains('enemy')) {
+                    if (!cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle')) {
                         cell.classList.add('highlight');
                     }
                 }
