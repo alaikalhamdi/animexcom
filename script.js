@@ -14,6 +14,8 @@ const attackRange = 1;
 const unitHealth = 50;
 const enemyHealth = 50;
 const attackDamage = 20;
+let unitsMoved = 0;
+let totalUnits = 0;
 
 document.querySelectorAll('.grid-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -26,7 +28,6 @@ document.querySelectorAll('.grid-item').forEach(item => {
                     moveUnit(selectedUnit, item);
                 }
                 selectedUnit = null;
-                nextTurn(); // Go to next turn after moving or attacking
             } else {
                 selectUnit(item);
             }
@@ -77,6 +78,11 @@ function moveUnit(unit, target) {
 
         console.log('Unit moved from', unit, 'to', target);
         clearHighlights();
+        unitsMoved++;
+        updateUnitsLeftDisplay();
+        if (unitsMoved >= totalUnits) {
+            nextTurn();
+        }
     } else {
         throw new Error('Invalid move');
     }
@@ -107,6 +113,8 @@ function addUnit() {
         randomCell.setAttribute('data-health', unitHealth);
         addHealthBar(randomCell, unitHealth);
         console.log('Unit added at', randomCell);
+        totalUnits++;
+        updateUnitsLeftDisplay();
     }
 }
 
@@ -129,7 +137,10 @@ function resetGrid() {
         removeHealthBar(item);
     });
     turn = 0;
+    totalUnits = 0;
+    unitsMoved = 0;
     updateTurnDisplay();
+    updateUnitsLeftDisplay();
     console.log('Grid reset');
     addEnemy(1); // Add an enemy after resetting the grid
 }
@@ -216,7 +227,9 @@ function addEnemy(amount = 1) {
 
 function nextTurn() {
     turn++;
+    unitsMoved = 0;
     updateTurnDisplay();
+    updateUnitsLeftDisplay();
     console.log('Turn', turn);
     moveEnemies();
 }
@@ -298,6 +311,11 @@ function removeHealthBar(cell) {
 
 function updateTurnDisplay() {
     document.getElementById('turn-counter').textContent = turn;
+}
+
+function updateUnitsLeftDisplay() {
+    const unitsLeft = totalUnits - unitsMoved;
+    document.getElementById('units-left-counter').textContent = unitsLeft;
 }
 
 addEnemy(1);
