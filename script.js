@@ -22,8 +22,6 @@ function addObstacles(amount = 10) {
 
 addObstacles();
 
-let selectedUnit = null;
-let turn = 0;
 const moveLimit = 3;
 const attackRange = 1;
 const unitHealth = 50;
@@ -31,23 +29,30 @@ const enemyHealth = 50;
 const attackDamage = 20;
 let unitsMoved = 0;
 let totalUnits = 0;
+let selectedUnit = null;
+let turn = 0;
+let mapBuilderMode = false;
 
 document.querySelectorAll('.grid-item').forEach(item => {
     item.addEventListener('click', () => {
-        console.log('Grid item clicked:', item);
-        try {
-            if (selectedUnit) {
-                if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
-                    attackEnemy(selectedUnit, item);
+        if (mapBuilderMode) {
+            toggleMapBuilderItem(item);
+        } else {
+            console.log('Grid item clicked:', item);
+            try {
+                if (selectedUnit) {
+                    if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                        attackEnemy(selectedUnit, item);
+                    } else {
+                        moveUnit(selectedUnit, item);
+                    }
+                    selectedUnit = null;
                 } else {
-                    moveUnit(selectedUnit, item);
+                    selectUnit(item);
                 }
-                selectedUnit = null;
-            } else {
-                selectUnit(item);
+            } catch (error) {
+                console.error('Error moving unit:', error);
             }
-        } catch (error) {
-            console.error('Error moving unit:', error);
         }
     });
 
@@ -160,8 +165,10 @@ function resetGrid() {
     updateUnitsLeftDisplay();
     clearHighlights();
     console.log('Grid reset');
-    addObstacles(); // Regenerate obstacles
-    addEnemy(1); // Add an enemy after resetting the grid
+    if (!mapBuilderMode) {
+        addObstacles(); // Regenerate obstacles
+        addEnemy(1); // Add an enemy after resetting the grid
+    }
 }
 
 function moveEnemies() {
@@ -335,6 +342,96 @@ function updateTurnDisplay() {
 function updateUnitsLeftDisplay() {
     const unitsLeft = totalUnits - unitsMoved;
     document.getElementById('units-left-counter').textContent = unitsLeft;
+}
+
+function toggleMapBuilderItem(item) {
+    if (item.classList.contains('unit')) {
+        item.classList.remove('unit');
+        item.style.backgroundColor = 'lightgray';
+        removeHealthBar(item);
+    } else if (item.classList.contains('enemy')) {
+        item.classList.remove('enemy');
+        item.style.backgroundColor = 'lightgray';
+        removeHealthBar(item);
+    } else if (item.classList.contains('obstacle')) {
+        item.classList.remove('obstacle');
+        item.style.backgroundColor = 'lightgray';
+    } else {
+        const type = prompt('Enter type (unit/enemy/obstacle):');
+        if (type === 'unit') {
+            item.classList.add('unit');
+            item.style.backgroundColor = 'blue';
+            item.setAttribute('data-health', unitHealth);
+            addHealthBar(item, unitHealth);
+        } else if (type === 'enemy') {
+            item.classList.add('enemy');
+            item.style.backgroundColor = 'red';
+            item.setAttribute('data-health', enemyHealth);
+            addHealthBar(item, enemyHealth);
+        } else if (type === 'obstacle') {
+            item.classList.add('obstacle');
+            item.style.backgroundColor = 'black';
+        }
+    }
+}
+
+function switchToMapBuilder() {
+    mapBuilderMode = !mapBuilderMode;
+    if (mapBuilderMode) {
+        console.log('Switched to Map Builder Mode');
+    } else {
+        console.log('Switched to Game Mode');
+    }
+}
+
+function exportMap() {
+    const mapData = [];
+    document.querySelectorAll('.grid-item').forEach(item => {
+        const cellData = {
+            unit: item.classList.contains('unit'),
+            enemy: item.classList.contains('enemy'),
+            obstacle: item.classList.contains('obstacle'),
+            health: item.getAttribute('data-health')
+        };
+        mapData.push(cellData);
+    });
+    const json = JSON.stringify(mapData);
+    const blob = new Blob([json], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'map.json';
+    a.click();
+    URL.revokeObjectURL(url);
+}
+
+function importMap(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onload = function(e) {
+        const mapData = JSON.parse(e.target.result);
+        document.querySelectorAll('.grid-item').forEach((item, index) => {
+            const cellData = mapData[index];
+            item.classList.remove('unit', 'enemy', 'obstacle');
+            item.style.backgroundColor = 'lightgray';
+            removeHealthBar(item);
+            if (cellData.unit) {
+                item.classList.add('unit');
+                item.style.backgroundColor = 'blue';
+                item.setAttribute('data-health', cellData.health);
+                addHealthBar(item, cellData.health);
+            } else if (cellData.enemy) {
+                item.classList.add('enemy');
+                item.style.backgroundColor = 'red';
+                item.setAttribute('data-health', cellData.health);
+                addHealthBar(item, cellData.health);
+            } else if (cellData.obstacle) {
+                item.classList.add('obstacle');
+                item.style.backgroundColor = 'black';
+            }
+        });
+    };
+    reader.readAsText(file);
 }
 
 addEnemy(1);

@@ -45,9 +45,12 @@
     <div class="grid-container"></div>
     <div class="controls">
         <button onclick="addUnit()">Add Unit</button>
-        <button onclick="addEnemy(1)">Add Enemy</button>
         <button onclick="removeUnit()">Remove Unit</button>
         <button onclick="resetGrid()">Reset Grid</button>
+        <button onclick="switchToMapBuilder()">Map Builder Mode</button>
+        <button onclick="exportMap()">Export Map</button>
+        <input type="file" id="importMapInput" onchange="importMap(event)" style="display: none;">
+        <button onclick="document.getElementById('importMapInput').click()">Import Map</button>
     </div>
     <div class="turn-display">Turn: <span id="turn-counter">0</span></div>
     <div class="units-left-display">Units left to move: <span id="units-left-counter">0</span></div>
