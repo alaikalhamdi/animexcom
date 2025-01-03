@@ -32,6 +32,7 @@ let totalUnits = 0;
 let selectedUnit = null;
 let turn = 0;
 let mapBuilderMode = false;
+let movedUnits = new Set();
 
 document.querySelectorAll('.grid-item').forEach(item => {
     item.addEventListener('click', () => {
@@ -98,6 +99,7 @@ function moveUnit(unit, target) {
 
         console.log('Unit moved from', unit, 'to', target);
         clearHighlights();
+        movedUnits.add(target);
         unitsMoved++;
         updateUnitsLeftDisplay();
         if (unitsMoved >= totalUnits) {
@@ -161,6 +163,7 @@ function resetGrid() {
     totalUnits = 0;
     unitsMoved = 0;
     selectedUnit = null; // Reset selected unit
+    movedUnits.clear(); // Clear moved units
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     clearHighlights();
@@ -230,6 +233,8 @@ function attackUnit(enemy, unit) {
         unit.style.backgroundColor = 'lightgray';
         console.log('Unit defeated by', enemy, 'at', unit);
         removeHealthBar(unit);
+        totalUnits--;
+        updateUnitsLeftDisplay();
     } else {
         unit.setAttribute('data-health', unitHealth);
         updateHealthBar(unit, unitHealth);
@@ -254,6 +259,7 @@ function addEnemy(amount = 1) {
 function nextTurn() {
     turn++;
     unitsMoved = 0;
+    movedUnits.clear(); // Clear moved units for the new turn
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     console.log('Turn', turn);
@@ -363,6 +369,8 @@ function toggleMapBuilderItem(item) {
             item.style.backgroundColor = 'blue';
             item.setAttribute('data-health', unitHealth);
             addHealthBar(item, unitHealth);
+            totalUnits++;
+            updateUnitsLeftDisplay();
         } else if (type === 'enemy') {
             item.classList.add('enemy');
             item.style.backgroundColor = 'red';
@@ -424,6 +432,7 @@ function importMap(event) {
                 item.style.backgroundColor = 'blue';
                 item.setAttribute('data-health', cellData.health);
                 addHealthBar(item, cellData.health);
+                totalUnits++;
             } else if (cellData.enemy) {
                 item.classList.add('enemy');
                 item.style.backgroundColor = 'red';
@@ -434,6 +443,7 @@ function importMap(event) {
                 item.style.backgroundColor = 'black';
             }
         });
+        updateUnitsLeftDisplay();
     };
     reader.readAsText(file);
 }
