@@ -116,12 +116,15 @@
                 target.style.backgroundColor = 'blue';
                 unit.classList.remove('unit');
                 unit.style.backgroundColor = 'lightgray';
+                target.setAttribute('data-health', unit.getAttribute('data-health'));
         
                 // Move health bar
                 const healthBar = unit.querySelector('.health-bar');
                 if (healthBar) {
                     unit.removeChild(healthBar);
                     target.appendChild(healthBar);
+                } else {
+                    addHealthBar(target, unit.getAttribute('data-health'));
                 }
         
                 console.log('Unit moved from', unit, 'to', target);
