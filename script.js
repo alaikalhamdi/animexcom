@@ -1,10 +1,17 @@
 const gridContainer = document.querySelector('.grid-container');
 const GRID_SIZE = 100;
-const MOVE_LIMIT = 3;
-const ATTACK_RANGE = 1;
-const UNIT_HEALTH = 50;
-const ENEMY_HEALTH = 50;
-const ATTACK_DAMAGE = 20;
+const moveLimit = 3;
+const attackRange = 1;
+const unitHealth = 50;
+const enemyHealth = 50;
+const attackDamage = 20;
+let unitsMoved = 0;
+let totalUnits = 0;
+let selectedUnit = null;
+let turn = 0;
+let mapBuilderMode = false;
+let movedUnits = new Set();
+let spawnPoints = [];
 
 // Generate grid items
 for (let i = 0; i < GRID_SIZE; i++) {
@@ -15,7 +22,7 @@ for (let i = 0; i < GRID_SIZE; i++) {
 
 // Add obstacles
 function addObstacles(amount = 10) {
-    const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle)');
+    const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
@@ -26,19 +33,56 @@ function addObstacles(amount = 10) {
     }
 }
 
-addObstacles();
+// Add spawn points
+function addSpawnPoints() {
+    const row = Math.floor(Math.random() * 10); // Random row
+    for (let col = 0; col < 3; col++) {
+        const index = row * 10 + col;
+        const spawnPoint = document.querySelector(`.grid-container > div:nth-child(${index + 1})`);
+        spawnPoint.classList.add('spawn-point');
+        spawnPoint.style.backgroundColor = 'green';
+        spawnPoints.push(spawnPoint);
+        console.log('Spawn point added at', spawnPoint);
+    }
+}
 
-let unitsMoved = 0;
-let totalUnits = 0;
-let selectedUnit = null;
-let turn = 0;
-let mapBuilderMode = false;
-let movedUnits = new Set();
+addObstacles();
+addSpawnPoints();
 
 document.querySelectorAll('.grid-item').forEach(item => {
-    item.addEventListener('click', () => handleGridItemClick(item));
-    item.addEventListener('mouseover', () => handleGridItemMouseOver(item));
-    item.addEventListener('mouseout', () => handleGridItemMouseOut(item));
+    item.addEventListener('click', () => {
+        if (mapBuilderMode) {
+            toggleMapBuilderItem(item);
+        } else {
+            console.log('Grid item clicked:', item);
+            try {
+                if (selectedUnit) {
+                    if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                        attackEnemy(selectedUnit, item);
+                    } else {
+                        moveUnit(selectedUnit, item);
+                    }
+                    selectedUnit = null;
+                } else {
+                    selectUnit(item);
+                }
+            } catch (error) {
+                console.error('Error moving unit:', error);
+            }
+        }
+    });
+
+    item.addEventListener('mouseover', () => {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+            item.style.backgroundColor = 'lightblue';
+        }
+    });
+
+    item.addEventListener('mouseout', () => {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+            item.style.backgroundColor = 'lightgray';
+        }
+    });
 });
 
 function handleGridItemClick(item) {
@@ -117,7 +161,7 @@ function moveUnit(unit, target) {
 
 function attackEnemy(unit, enemy) {
     let enemyHealth = parseInt(enemy.getAttribute('data-health'));
-    enemyHealth -= ATTACK_DAMAGE;
+    enemyHealth -= attackDamage;
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         enemy.style.backgroundColor = 'lightgray';
@@ -132,16 +176,22 @@ function attackEnemy(unit, enemy) {
 }
 
 function addUnit() {
-    const emptyCells = document.querySelectorAll('.grid-item:not(.unit)');
-    if (emptyCells.length > 0) {
-        const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+    const emptySpawnPoints = spawnPoints.filter(point => !point.classList.contains('unit'));
+    if (emptySpawnPoints.length > 0) {
+        const randomCell = emptySpawnPoints[Math.floor(Math.random() * emptySpawnPoints.length)];
         randomCell.classList.add('unit');
         randomCell.style.backgroundColor = 'blue';
-        randomCell.setAttribute('data-health', UNIT_HEALTH);
-        addHealthBar(randomCell, UNIT_HEALTH);
+        randomCell.setAttribute('data-health', unitHealth);
+        addHealthBar(randomCell, unitHealth);
         console.log('Unit added at', randomCell);
         totalUnits++;
         updateUnitsLeftDisplay();
+        // Remove the spawn point after use
+        randomCell.classList.remove('spawn-point');
+        randomCell.style.backgroundColor = 'lightgray';
+        spawnPoints = spawnPoints.filter(point => point !== randomCell);
+    } else {
+        console.log('No empty spawn points available');
     }
 }
 
@@ -158,22 +208,27 @@ function removeUnit() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit', 'enemy', 'obstacle');
+        item.classList.remove('unit');
+        item.classList.remove('enemy');
+        item.classList.remove('obstacle');
+        item.classList.remove('spawn-point');
         item.style.backgroundColor = 'lightgray';
         removeHealthBar(item);
     });
     turn = 0;
     totalUnits = 0;
     unitsMoved = 0;
-    selectedUnit = null;
-    movedUnits.clear();
+    selectedUnit = null; // Reset selected unit
+    movedUnits.clear(); // Clear moved units
+    spawnPoints = []; // Clear spawn points
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     clearHighlights();
     console.log('Grid reset');
     if (!mapBuilderMode) {
-        addObstacles();
-        addEnemy(1);
+        addObstacles(); // Regenerate obstacles
+        addSpawnPoints(); // Regenerate spawn points
+        addEnemy(1); // Add an enemy after resetting the grid
     }
 }
 
@@ -230,7 +285,7 @@ function moveEnemies() {
 function attackUnit(enemy, unit) {
     let unitHealth = parseInt(unit.getAttribute('data-health'));
     console.log('Unit health:', unitHealth);
-    unitHealth -= ATTACK_DAMAGE;
+    unitHealth -= attackDamage;
     if (unitHealth <= 0) {
         unit.classList.remove('unit');
         unit.style.backgroundColor = 'lightgray';
@@ -252,8 +307,8 @@ function addEnemy(amount = 1) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add('enemy');
             randomCell.style.backgroundColor = 'red';
-            randomCell.setAttribute('data-health', ENEMY_HEALTH);
-            addHealthBar(randomCell, ENEMY_HEALTH);
+            randomCell.setAttribute('data-health', enemyHealth);
+            addHealthBar(randomCell, enemyHealth);
             console.log('Enemy added at', randomCell);
         }
     }
@@ -262,7 +317,7 @@ function addEnemy(amount = 1) {
 function nextTurn() {
     turn++;
     unitsMoved = 0;
-    movedUnits.clear();
+    movedUnits.clear(); // Clear moved units for the new turn
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     console.log('Turn', turn);
@@ -279,11 +334,11 @@ function highlightMoves(unit) {
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;
 
-    for (let row = unitRow - MOVE_LIMIT; row <= unitRow + MOVE_LIMIT; row++) {
-        for (let col = unitCol - MOVE_LIMIT; col <= unitCol + MOVE_LIMIT; col++) {
+    for (let row = unitRow - moveLimit; row <= unitRow + moveLimit; row++) {
+        for (let col = unitCol - moveLimit; col <= unitCol + moveLimit; col++) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
-                if (distance <= MOVE_LIMIT) {
+                if (distance <= moveLimit) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
                     if (!cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle')) {
                         cell.classList.add('highlight');
@@ -299,11 +354,11 @@ function highlightAttackRange(unit) {
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;
 
-    for (let row = unitRow - ATTACK_RANGE; row <= unitRow + ATTACK_RANGE; row++) {
-        for (let col = unitCol - ATTACK_RANGE; col <= unitCol + ATTACK_RANGE; col++) {
+    for (let row = unitRow - attackRange; row <= unitRow + attackRange; row++) {
+        for (let col = unitCol - attackRange; col <= unitCol + attackRange; col++) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
-                if (distance <= ATTACK_RANGE) {
+                if (distance <= attackRange) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
                     if (cell.classList.contains('enemy')) {
                         cell.classList.add('attack-range');
@@ -365,23 +420,31 @@ function toggleMapBuilderItem(item) {
     } else if (item.classList.contains('obstacle')) {
         item.classList.remove('obstacle');
         item.style.backgroundColor = 'lightgray';
+    } else if (item.classList.contains('spawn-point')) {
+        item.classList.remove('spawn-point');
+        item.style.backgroundColor = 'lightgray';
+        spawnPoints = spawnPoints.filter(point => point !== item);
     } else {
-        const type = prompt('Enter type (unit/enemy/obstacle):');
+        const type = prompt('Enter type (unit/enemy/obstacle/spawn-point):');
         if (type === 'unit') {
             item.classList.add('unit');
             item.style.backgroundColor = 'blue';
-            item.setAttribute('data-health', UNIT_HEALTH);
-            addHealthBar(item, UNIT_HEALTH);
+            item.setAttribute('data-health', unitHealth);
+            addHealthBar(item, unitHealth);
             totalUnits++;
             updateUnitsLeftDisplay();
         } else if (type === 'enemy') {
             item.classList.add('enemy');
             item.style.backgroundColor = 'red';
-            item.setAttribute('data-health', ENEMY_HEALTH);
-            addHealthBar(item, ENEMY_HEALTH);
+            item.setAttribute('data-health', enemyHealth);
+            addHealthBar(item, enemyHealth);
         } else if (type === 'obstacle') {
             item.classList.add('obstacle');
             item.style.backgroundColor = 'black';
+        } else if (type === 'spawn-point') {
+            item.classList.add('spawn-point');
+            item.style.backgroundColor = 'green';
+            spawnPoints.push(item);
         }
     }
 }
@@ -400,6 +463,7 @@ function exportMap() {
             unit: item.classList.contains('unit'),
             enemy: item.classList.contains('enemy'),
             obstacle: item.classList.contains('obstacle'),
+            spawnPoint: item.classList.contains('spawn-point'),
             health: item.getAttribute('data-health')
         };
         mapData.push(cellData);
@@ -421,7 +485,7 @@ function importMap(event) {
         const mapData = JSON.parse(e.target.result);
         document.querySelectorAll('.grid-item').forEach((item, index) => {
             const cellData = mapData[index];
-            item.classList.remove('unit', 'enemy', 'obstacle');
+            item.classList.remove('unit', 'enemy', 'obstacle', 'spawn-point');
             item.style.backgroundColor = 'lightgray';
             removeHealthBar(item);
             if (cellData.unit) {
@@ -438,6 +502,10 @@ function importMap(event) {
             } else if (cellData.obstacle) {
                 item.classList.add('obstacle');
                 item.style.backgroundColor = 'black';
+            } else if (cellData.spawnPoint) {
+                item.classList.add('spawn-point');
+                item.style.backgroundColor = 'green';
+                spawnPoints.push(item);
             }
         });
         updateUnitsLeftDisplay();
