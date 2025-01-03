@@ -1,7 +1,13 @@
 const gridContainer = document.querySelector('.grid-container');
+const GRID_SIZE = 100;
+const MOVE_LIMIT = 3;
+const ATTACK_RANGE = 1;
+const UNIT_HEALTH = 50;
+const ENEMY_HEALTH = 50;
+const ATTACK_DAMAGE = 20;
 
-// Generate 100 grid items
-for (let i = 0; i < 100; i++) {
+// Generate grid items
+for (let i = 0; i < GRID_SIZE; i++) {
     const gridItem = document.createElement('div');
     gridItem.classList.add('grid-item');
     gridContainer.appendChild(gridItem);
@@ -22,11 +28,6 @@ function addObstacles(amount = 10) {
 
 addObstacles();
 
-const moveLimit = 3;
-const attackRange = 1;
-const unitHealth = 50;
-const enemyHealth = 50;
-const attackDamage = 20;
 let unitsMoved = 0;
 let totalUnits = 0;
 let selectedUnit = null;
@@ -35,40 +36,44 @@ let mapBuilderMode = false;
 let movedUnits = new Set();
 
 document.querySelectorAll('.grid-item').forEach(item => {
-    item.addEventListener('click', () => {
-        if (mapBuilderMode) {
-            toggleMapBuilderItem(item);
-        } else {
-            console.log('Grid item clicked:', item);
-            try {
-                if (selectedUnit) {
-                    if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
-                        attackEnemy(selectedUnit, item);
-                    } else {
-                        moveUnit(selectedUnit, item);
-                    }
-                    selectedUnit = null;
-                } else {
-                    selectUnit(item);
-                }
-            } catch (error) {
-                console.error('Error moving unit:', error);
-            }
-        }
-    });
-
-    item.addEventListener('mouseover', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
-            item.style.backgroundColor = 'lightblue';
-        }
-    });
-
-    item.addEventListener('mouseout', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
-            item.style.backgroundColor = 'lightgray';
-        }
-    });
+    item.addEventListener('click', () => handleGridItemClick(item));
+    item.addEventListener('mouseover', () => handleGridItemMouseOver(item));
+    item.addEventListener('mouseout', () => handleGridItemMouseOut(item));
 });
+
+function handleGridItemClick(item) {
+    if (mapBuilderMode) {
+        toggleMapBuilderItem(item);
+    } else {
+        console.log('Grid item clicked:', item);
+        try {
+            if (selectedUnit) {
+                if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                    attackEnemy(selectedUnit, item);
+                } else {
+                    moveUnit(selectedUnit, item);
+                }
+                selectedUnit = null;
+            } else {
+                selectUnit(item);
+            }
+        } catch (error) {
+            console.error('Error moving unit:', error);
+        }
+    }
+}
+
+function handleGridItemMouseOver(item) {
+    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+        item.style.backgroundColor = 'lightblue';
+    }
+}
+
+function handleGridItemMouseOut(item) {
+    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+        item.style.backgroundColor = 'lightgray';
+    }
+}
 
 function selectUnit(item) {
     if (item.classList.contains('unit')) {
@@ -112,7 +117,7 @@ function moveUnit(unit, target) {
 
 function attackEnemy(unit, enemy) {
     let enemyHealth = parseInt(enemy.getAttribute('data-health'));
-    enemyHealth -= attackDamage;
+    enemyHealth -= ATTACK_DAMAGE;
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         enemy.style.backgroundColor = 'lightgray';
@@ -132,8 +137,8 @@ function addUnit() {
         const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
         randomCell.classList.add('unit');
         randomCell.style.backgroundColor = 'blue';
-        randomCell.setAttribute('data-health', unitHealth);
-        addHealthBar(randomCell, unitHealth);
+        randomCell.setAttribute('data-health', UNIT_HEALTH);
+        addHealthBar(randomCell, UNIT_HEALTH);
         console.log('Unit added at', randomCell);
         totalUnits++;
         updateUnitsLeftDisplay();
@@ -153,24 +158,22 @@ function removeUnit() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit');
-        item.classList.remove('enemy');
-        item.classList.remove('obstacle');
+        item.classList.remove('unit', 'enemy', 'obstacle');
         item.style.backgroundColor = 'lightgray';
         removeHealthBar(item);
     });
     turn = 0;
     totalUnits = 0;
     unitsMoved = 0;
-    selectedUnit = null; // Reset selected unit
-    movedUnits.clear(); // Clear moved units
+    selectedUnit = null;
+    movedUnits.clear();
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     clearHighlights();
     console.log('Grid reset');
     if (!mapBuilderMode) {
-        addObstacles(); // Regenerate obstacles
-        addEnemy(1); // Add an enemy after resetting the grid
+        addObstacles();
+        addEnemy(1);
     }
 }
 
@@ -227,7 +230,7 @@ function moveEnemies() {
 function attackUnit(enemy, unit) {
     let unitHealth = parseInt(unit.getAttribute('data-health'));
     console.log('Unit health:', unitHealth);
-    unitHealth -= attackDamage;
+    unitHealth -= ATTACK_DAMAGE;
     if (unitHealth <= 0) {
         unit.classList.remove('unit');
         unit.style.backgroundColor = 'lightgray';
@@ -249,8 +252,8 @@ function addEnemy(amount = 1) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add('enemy');
             randomCell.style.backgroundColor = 'red';
-            randomCell.setAttribute('data-health', enemyHealth);
-            addHealthBar(randomCell, enemyHealth);
+            randomCell.setAttribute('data-health', ENEMY_HEALTH);
+            addHealthBar(randomCell, ENEMY_HEALTH);
             console.log('Enemy added at', randomCell);
         }
     }
@@ -259,7 +262,7 @@ function addEnemy(amount = 1) {
 function nextTurn() {
     turn++;
     unitsMoved = 0;
-    movedUnits.clear(); // Clear moved units for the new turn
+    movedUnits.clear();
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     console.log('Turn', turn);
@@ -276,11 +279,11 @@ function highlightMoves(unit) {
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;
 
-    for (let row = unitRow - moveLimit; row <= unitRow + moveLimit; row++) {
-        for (let col = unitCol - moveLimit; col <= unitCol + moveLimit; col++) {
+    for (let row = unitRow - MOVE_LIMIT; row <= unitRow + MOVE_LIMIT; row++) {
+        for (let col = unitCol - MOVE_LIMIT; col <= unitCol + MOVE_LIMIT; col++) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
-                if (distance <= moveLimit) {
+                if (distance <= MOVE_LIMIT) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
                     if (!cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle')) {
                         cell.classList.add('highlight');
@@ -296,11 +299,11 @@ function highlightAttackRange(unit) {
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;
 
-    for (let row = unitRow - attackRange; row <= unitRow + attackRange; row++) {
-        for (let col = unitCol - attackRange; col <= unitCol + attackRange; col++) {
+    for (let row = unitRow - ATTACK_RANGE; row <= unitRow + ATTACK_RANGE; row++) {
+        for (let col = unitCol - ATTACK_RANGE; col <= unitCol + ATTACK_RANGE; col++) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
-                if (distance <= attackRange) {
+                if (distance <= ATTACK_RANGE) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
                     if (cell.classList.contains('enemy')) {
                         cell.classList.add('attack-range');
@@ -367,15 +370,15 @@ function toggleMapBuilderItem(item) {
         if (type === 'unit') {
             item.classList.add('unit');
             item.style.backgroundColor = 'blue';
-            item.setAttribute('data-health', unitHealth);
-            addHealthBar(item, unitHealth);
+            item.setAttribute('data-health', UNIT_HEALTH);
+            addHealthBar(item, UNIT_HEALTH);
             totalUnits++;
             updateUnitsLeftDisplay();
         } else if (type === 'enemy') {
             item.classList.add('enemy');
             item.style.backgroundColor = 'red';
-            item.setAttribute('data-health', enemyHealth);
-            addHealthBar(item, enemyHealth);
+            item.setAttribute('data-health', ENEMY_HEALTH);
+            addHealthBar(item, ENEMY_HEALTH);
         } else if (type === 'obstacle') {
             item.classList.add('obstacle');
             item.style.backgroundColor = 'black';
@@ -385,15 +388,9 @@ function toggleMapBuilderItem(item) {
 
 function switchToMapBuilder() {
     mapBuilderMode = !mapBuilderMode;
-    if (mapBuilderMode) {
-        console.log('Switched to Map Builder Mode');
-        // change the button text to "Switch to Game Mode"
-        document.getElementById('map-builder-button').textContent = 'Switch to Game Mode';
-    } else {
-        console.log('Switched to Game Mode');
-        // change the button text to "Map Builder Mode"
-        document.getElementById('map-builder-button').textContent = 'Map Builder Mode';
-    }
+    const button = document.getElementById('map-builder-button');
+    button.textContent = mapBuilderMode ? 'Switch to Game Mode' : 'Map Builder Mode';
+    console.log(mapBuilderMode ? 'Switched to Map Builder Mode' : 'Switched to Game Mode');
 }
 
 function exportMap() {
