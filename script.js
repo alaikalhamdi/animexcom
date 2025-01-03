@@ -379,8 +379,12 @@ function switchToMapBuilder() {
     mapBuilderMode = !mapBuilderMode;
     if (mapBuilderMode) {
         console.log('Switched to Map Builder Mode');
+        // change the button text to "Switch to Game Mode"
+        document.getElementById('map-builder-button').textContent = 'Switch to Game Mode';
     } else {
         console.log('Switched to Game Mode');
+        // change the button text to "Map Builder Mode"
+        document.getElementById('map-builder-button').textContent = 'Map Builder Mode';
     }
 }
 
