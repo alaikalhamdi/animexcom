@@ -16,9 +16,28 @@
             height: 50px;
             background-color: lightgray;
             border: 1px solid #ccc;
+            position: relative;
         }
         .highlight {
             background-color: lightblue !important;
+        }
+        .attack-range {
+            background-color: lightcoral !important;
+        }
+        .health-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background-color: green;
+        }
+        .controls {
+            margin-top: 10px;
+        }
+        .turn-display {
+            margin-top: 10px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -29,6 +48,7 @@
         <button onclick="removeUnit()">Remove Unit</button>
         <button onclick="resetGrid()">Reset Grid</button>
     </div>
+    <div class="turn-display">Turn: <span id="turn-counter">0</span></div>
     <script>
         const gridContainer = document.querySelector('.grid-container');
 
@@ -42,15 +62,23 @@
         let selectedUnit = null;
         let turn = 0;
         const moveLimit = 3;
+        const attackRange = 1;
+        const unitHealth = 50;
+        const enemyHealth = 50;
+        const attackDamage = 20;
 
         document.querySelectorAll('.grid-item').forEach(item => {
             item.addEventListener('click', () => {
                 console.log('Grid item clicked:', item);
                 try {
                     if (selectedUnit) {
-                        moveUnit(selectedUnit, item);
+                        if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                            attackEnemy(selectedUnit, item);
+                        } else {
+                            moveUnit(selectedUnit, item);
+                        }
                         selectedUnit = null;
-                        nextTurn(); // Go to next turn after moving a unit
+                        nextTurn(); // Go to next turn after moving or attacking
                     } else {
                         selectUnit(item);
                     }
@@ -78,6 +106,7 @@
                 item.style.backgroundColor = 'yellow';
                 console.log('Unit selected:', item);
                 highlightMoves(item);
+                highlightAttackRange(item);
             }
         }
 
@@ -87,11 +116,34 @@
                 target.style.backgroundColor = 'blue';
                 unit.classList.remove('unit');
                 unit.style.backgroundColor = 'lightgray';
+        
+                // Move health bar
+                const healthBar = unit.querySelector('.health-bar');
+                if (healthBar) {
+                    unit.removeChild(healthBar);
+                    target.appendChild(healthBar);
+                }
+        
                 console.log('Unit moved from', unit, 'to', target);
                 clearHighlights();
             } else {
                 throw new Error('Invalid move');
             }
+        }
+
+        function attackEnemy(unit, enemy) {
+            let enemyHealth = parseInt(enemy.getAttribute('data-health'));
+            enemyHealth -= attackDamage;
+            if (enemyHealth <= 0) {
+                enemy.classList.remove('enemy');
+                enemy.style.backgroundColor = 'lightgray';
+                console.log('Enemy defeated by', unit, 'at', enemy);
+            } else {
+                enemy.setAttribute('data-health', enemyHealth);
+                updateHealthBar(enemy, enemyHealth);
+                console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
+            }
+            clearHighlights();
         }
 
         function addUnit() {
@@ -100,6 +152,8 @@
                 const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
                 randomCell.classList.add('unit');
                 randomCell.style.backgroundColor = 'blue';
+                randomCell.setAttribute('data-health', unitHealth);
+                addHealthBar(randomCell, unitHealth);
                 console.log('Unit added at', randomCell);
             }
         }
@@ -110,6 +164,7 @@
                 const randomUnit = units[Math.floor(Math.random() * units.length)];
                 randomUnit.classList.remove('unit');
                 randomUnit.style.backgroundColor = 'lightgray';
+                removeHealthBar(randomUnit);
                 console.log('Unit removed from', randomUnit);
             }
         }
@@ -119,8 +174,10 @@
                 item.classList.remove('unit');
                 item.classList.remove('enemy');
                 item.style.backgroundColor = 'lightgray';
+                removeHealthBar(item);
             });
             turn = 0;
+            updateTurnDisplay();
             console.log('Grid reset');
             addEnemy(1); // Add an enemy after resetting the grid
         }
@@ -159,31 +216,54 @@
                     else if (enemyCol > unitCol) newCol--;
 
                     const newCell = document.querySelector(`.grid-container > div:nth-child(${newRow * 10 + newCol + 1})`);
-                    if (!newCell.classList.contains('unit') && !newCell.classList.contains('enemy')) {
+                    if (newCell.classList.contains('unit')) {
+                        attackUnit(enemy, newCell);
+                    } else if (!newCell.classList.contains('enemy')) {
                         newCell.classList.add('enemy');
                         newCell.style.backgroundColor = 'red';
+                        newCell.setAttribute('data-health', enemy.getAttribute('data-health'));
+                        addHealthBar(newCell, enemy.getAttribute('data-health'));
                         enemy.classList.remove('enemy');
                         enemy.style.backgroundColor = 'lightgray';
+                        removeHealthBar(enemy);
                         console.log('Enemy moved from', enemy, 'to', newCell);
                     }
                 }
             });
         }
 
+        function attackUnit(enemy, unit) {
+            let unitHealth = parseInt(unit.getAttribute('data-health'));
+            console.log('Unit health:', unitHealth);
+            unitHealth -= attackDamage;
+            if (unitHealth <= 0) {
+                unit.classList.remove('unit');
+                unit.style.backgroundColor = 'lightgray';
+                console.log('Unit defeated by', enemy, 'at', unit);
+            } else {
+                unit.setAttribute('data-health', unitHealth);
+                updateHealthBar(unit, unitHealth);
+                console.log('Unit attacked by', enemy, 'at', unit, 'remaining health:', unitHealth);
+            }
+        }
+
         function addEnemy(amount = 1) {
             for (let i = 0; i < amount; i++) {
-            const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy)');
-            if (emptyCells.length > 0) {
-                const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-                randomCell.classList.add('enemy');
-                randomCell.style.backgroundColor = 'red';
-                console.log('Enemy added at', randomCell);
-            }
+                const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy)');
+                if (emptyCells.length > 0) {
+                    const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+                    randomCell.classList.add('enemy');
+                    randomCell.style.backgroundColor = 'red';
+                    randomCell.setAttribute('data-health', enemyHealth);
+                    addHealthBar(randomCell, enemyHealth);
+                    console.log('Enemy added at', randomCell);
+                }
             }
         }
 
         function nextTurn() {
             turn++;
+            updateTurnDisplay();
             console.log('Turn', turn);
             moveEnemies();
         }
@@ -213,10 +293,58 @@
             }
         }
 
+        function highlightAttackRange(unit) {
+            const unitIndex = getCellIndex(unit);
+            const unitRow = Math.floor(unitIndex / 10);
+            const unitCol = unitIndex % 10;
+
+            for (let row = unitRow - attackRange; row <= unitRow + attackRange; row++) {
+                for (let col = unitCol - attackRange; col <= unitCol + attackRange; col++) {
+                    if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+                        const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
+                        if (distance <= attackRange) {
+                            const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
+                            if (cell.classList.contains('enemy')) {
+                                cell.classList.add('attack-range');
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         function clearHighlights() {
             document.querySelectorAll('.grid-item.highlight').forEach(item => {
                 item.classList.remove('highlight');
             });
+            document.querySelectorAll('.grid-item.attack-range').forEach(item => {
+                item.classList.remove('attack-range');
+            });
+        }
+
+        function addHealthBar(cell, health) {
+            const healthBar = document.createElement('div');
+            healthBar.classList.add('health-bar');
+            healthBar.style.width = `${health}%`;
+            cell.appendChild(healthBar);
+        }
+
+        function updateHealthBar(cell, health) {
+            const healthBar = cell.querySelector('.health-bar');
+            if (healthBar) {
+                healthBar.style.width = `${health}%`;
+            }
+        }
+
+        function removeHealthBar(cell) {
+            const healthBar = cell.querySelector('.health-bar');
+            if (healthBar) {
+                cell.removeChild(healthBar);
+            }
+        }
+
+        function updateTurnDisplay() {
+            document.getElementById('turn-counter').textContent = turn;
         }
 
         addEnemy(1);
