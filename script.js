@@ -89,6 +89,7 @@ function attackEnemy(unit, enemy) {
         enemy.classList.remove('enemy');
         enemy.style.backgroundColor = 'lightgray';
         console.log('Enemy defeated by', unit, 'at', enemy);
+        removeHealthBar(enemy);
     } else {
         enemy.setAttribute('data-health', enemyHealth);
         updateHealthBar(enemy, enemyHealth);
@@ -191,6 +192,7 @@ function attackUnit(enemy, unit) {
         unit.classList.remove('unit');
         unit.style.backgroundColor = 'lightgray';
         console.log('Unit defeated by', enemy, 'at', unit);
+        removeHealthBar(unit);
     } else {
         unit.setAttribute('data-health', unitHealth);
         updateHealthBar(unit, unitHealth);
