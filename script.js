@@ -206,7 +206,6 @@ function addUnitToSpawnPoint(spawnPoint) {
     updateUnitsLeftDisplay();
     // Remove the spawn point after use
     spawnPoint.classList.remove('spawn-point');
-    spawnPoint.style.backgroundColor = 'lightgray';
     spawnPoints = spawnPoints.filter(point => point !== spawnPoint);
 }
 
