@@ -1,7 +1,7 @@
 const gridContainer = document.querySelector('.grid-container');
 const GRID_SIZE = 100;
 const moveLimit = 3;
-const attackRange = 1;
+const attackRange = 2;
 const unitHealth = 50;
 const enemyHealth = 50;
 const attackDamage = 20;
@@ -45,7 +45,7 @@ function addSpawnPoints() {
     }
 }
 
-addObstacles();
+addObstacles(10);
 addSpawnPoints();
 
 document.querySelectorAll('.grid-item').forEach(item => {
