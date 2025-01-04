@@ -5,9 +5,9 @@ Pure HTML, CSS, JS. Though I might use Next.js. You know what to do if you want 
 
 ## Features
 - 10x10 grid map.
-- Obstacles that cannot be traversed.
 - Add unit & Remove unit.
-- Unit movement system. Limited to 3 tiles. Highlights tiles that can be traversed.
+- Unit movement system. Highlights tiles that can be traversed.
+- Obstacles that cannot be traversed. Unit pathfinding cannot go through an obstacle if it does not have enough movement points.
 - Turn based system. Next turn triggered after every unit moves.
 - Enemy. Moves 1 tile closer to any unit every turn. 
 - Map builder. Add and remove enemy/unit/obstacle tile anywhere.
