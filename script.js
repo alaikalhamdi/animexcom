@@ -62,6 +62,8 @@ document.querySelectorAll('.grid-item').forEach(item => {
                         moveUnit(selectedUnit, item);
                     }
                     selectedUnit = null;
+                } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
+                    addUnitToSpawnPoint(item);
                 } else {
                     selectUnit(item);
                 }
@@ -72,13 +74,13 @@ document.querySelectorAll('.grid-item').forEach(item => {
     });
 
     item.addEventListener('mouseover', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
             item.style.backgroundColor = 'lightblue';
         }
     });
 
     item.addEventListener('mouseout', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
             item.style.backgroundColor = 'lightgray';
         }
     });
@@ -192,6 +194,20 @@ function addUnit() {
     } else {
         console.log('No empty spawn points available');
     }
+}
+
+function addUnitToSpawnPoint(spawnPoint) {
+    spawnPoint.classList.add('unit');
+    spawnPoint.style.backgroundColor = 'blue';
+    spawnPoint.setAttribute('data-health', unitHealth);
+    addHealthBar(spawnPoint, unitHealth);
+    console.log('Unit added at', spawnPoint);
+    totalUnits++;
+    updateUnitsLeftDisplay();
+    // Remove the spawn point after use
+    spawnPoint.classList.remove('spawn-point');
+    spawnPoint.style.backgroundColor = 'lightgray';
+    spawnPoints = spawnPoints.filter(point => point !== spawnPoint);
 }
 
 function removeUnit() {
