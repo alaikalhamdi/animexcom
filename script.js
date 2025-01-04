@@ -11,6 +11,8 @@ let selectedUnit = null;
 let turn = 0;
 let movedUnits = new Set();
 let spawnPoints = [];
+// Add movement points
+const unitMovementPoints = 3;
 
 // Generate grid items
 for (let i = 0; i < GRID_SIZE; i++) {
@@ -131,12 +133,15 @@ function selectUnit(item) {
 }
 
 function moveUnit(unit, target) {
-    if (!target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
+    const path = findPath(unit, target);
+    const unitMP = parseInt(unit.getAttribute('data-mp'));
+    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
         target.classList.add('unit');
         target.style.backgroundColor = 'blue';
         unit.classList.remove('unit');
         unit.style.backgroundColor = 'lightgray';
         target.setAttribute('data-health', unit.getAttribute('data-health'));
+        target.setAttribute('data-mp', unitMP - (path.length - 1));
 
         // Move health bar
         const healthBar = unit.querySelector('.health-bar');
@@ -201,6 +206,7 @@ function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.classList.add('unit');
     spawnPoint.style.backgroundColor = 'blue';
     spawnPoint.setAttribute('data-health', unitHealth);
+    spawnPoint.setAttribute('data-mp', unitMovementPoints);
     addHealthBar(spawnPoint, unitHealth);
     console.log('Unit added at', spawnPoint);
     totalUnits++;
@@ -334,10 +340,17 @@ function nextTurn() {
     turn++;
     unitsMoved = 0;
     movedUnits.clear(); // Clear moved units for the new turn
+    replenishMovementPoints(); // Replenish movement points for all units
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     console.log('Turn', turn);
     moveEnemies();
+}
+
+function replenishMovementPoints() {
+    document.querySelectorAll('.grid-item.unit').forEach(unit => {
+        unit.setAttribute('data-mp', unitMovementPoints);
+    });
 }
 
 function getCellIndex(cell) {
@@ -349,16 +362,15 @@ function highlightMoves(unit) {
     const unitIndex = getCellIndex(unit);
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;
+    const unitMP = parseInt(unit.getAttribute('data-mp'));
 
-    for (let row = unitRow - moveLimit; row <= unitRow + moveLimit; row++) {
-        for (let col = unitCol - moveLimit; col <= unitCol + moveLimit; col++) {
+    for (let row = unitRow - unitMP; row <= unitRow + unitMP; row++) {
+        for (let col = unitCol - unitMP; col <= unitCol + unitMP; col++) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
-                const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
-                if (distance <= moveLimit) {
-                    const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
-                    if (!cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle')) {
-                        cell.classList.add('highlight');
-                    }
+                const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
+                const path = findPath(unit, cell);
+                if (path.length - 1 <= unitMP && !cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle')) {
+                    cell.classList.add('highlight');
                 }
             }
         }
@@ -438,6 +450,65 @@ function checkDefeatCondition() {
         alert('Defeat! All your units are defeated.');
         resetGrid();
     }
+}
+
+function calculateDistance(cell1, cell2) {
+    const index1 = getCellIndex(cell1);
+    const index2 = getCellIndex(cell2);
+    const row1 = Math.floor(index1 / 10);
+    const col1 = index1 % 10;
+    const row2 = Math.floor(index2 / 10);
+    const col2 = index2 % 10;
+    return Math.abs(row1 - row2) + Math.abs(col1 - col2);
+}
+
+function findPath(start, end) {
+    const startIdx = getCellIndex(start);
+    const endIdx = getCellIndex(end);
+    const startRow = Math.floor(startIdx / 10);
+    const startCol = startIdx % 10;
+    const endRow = Math.floor(endIdx / 10);
+    const endCol = endIdx % 10;
+
+    const queue = [[startRow, startCol]];
+    const visited = new Set();
+    const cameFrom = {};
+    visited.add(`${startRow},${startCol}`);
+
+    while (queue.length > 0) {
+        const [currentRow, currentCol] = queue.shift();
+        if (currentRow === endRow && currentCol === endCol) {
+            const path = [];
+            let current = `${endRow},${endCol}`;
+            while (current) {
+                const [row, col] = current.split(',').map(Number);
+                path.unshift(document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`));
+                current = cameFrom[current];
+            }
+            return path;
+        }
+
+        const neighbors = [
+            [currentRow - 1, currentCol],
+            [currentRow + 1, currentCol],
+            [currentRow, currentCol - 1],
+            [currentRow, currentCol + 1]
+        ];
+
+        for (const [neighborRow, neighborCol] of neighbors) {
+            if (neighborRow >= 0 && neighborRow < 10 && neighborCol >= 0 && neighborCol < 10) {
+                const neighbor = `${neighborRow},${neighborCol}`;
+                const neighborCell = document.querySelector(`.grid-container > div:nth-child(${neighborRow * 10 + neighborCol + 1})`);
+                if (!visited.has(neighbor) && !neighborCell.classList.contains('obstacle')) {
+                    queue.push([neighborRow, neighborCol]);
+                    visited.add(neighbor);
+                    cameFrom[neighbor] = `${currentRow},${currentCol}`;
+                }
+            }
+        }
+    }
+
+    return [];
 }
 
 addEnemy(1);
