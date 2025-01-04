@@ -45,7 +45,7 @@ function addSpawnPoints() {
     }
 }
 
-addObstacles(10);
+addObstacles();
 addSpawnPoints();
 
 document.querySelectorAll('.grid-item').forEach(item => {
@@ -168,6 +168,7 @@ function attackEnemy(unit, enemy) {
         enemy.style.backgroundColor = 'lightgray';
         console.log('Enemy defeated by', unit, 'at', enemy);
         removeHealthBar(enemy);
+        checkVictoryCondition();
     } else {
         enemy.setAttribute('data-health', enemyHealth);
         updateHealthBar(enemy, enemyHealth);
@@ -307,6 +308,7 @@ function attackUnit(enemy, unit) {
         removeHealthBar(unit);
         totalUnits--;
         updateUnitsLeftDisplay();
+        checkDefeatCondition();
     } else {
         unit.setAttribute('data-health', unitHealth);
         updateHealthBar(unit, unitHealth);
@@ -421,4 +423,21 @@ function updateUnitsLeftDisplay() {
     const unitsLeft = totalUnits - unitsMoved;
     document.getElementById('units-left-counter').textContent = unitsLeft;
 }
+
+function checkVictoryCondition() {
+    const enemies = document.querySelectorAll('.grid-item.enemy');
+    if (enemies.length === 0) {
+        alert('Victory! All enemies are defeated.');
+        resetGrid();
+    }
+}
+
+function checkDefeatCondition() {
+    const units = document.querySelectorAll('.grid-item.unit');
+    if (units.length === 0) {
+        alert('Defeat! All your units are defeated.');
+        resetGrid();
+    }
+}
+
 addEnemy(1);
