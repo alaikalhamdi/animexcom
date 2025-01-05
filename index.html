@@ -56,6 +56,12 @@
 <body>
     <div class="grid-container"></div>
     <div class="controls">
+        <div id="map-builder-controls" style="display: none;">
+            <label for="grid-length">Grid Length:</label>
+            <input type="number" id="grid-length" value="10" min="1" onchange="resizeGrid()">
+            <label for="grid-width">Grid Width:</label>
+            <input type="number" id="grid-width" value="10" min="1" onchange="resizeGrid()">
+        </div>
         <button onclick="resetGrid()">Reset Grid</button>
         <button onclick="switchToMapBuilder()" id="map-builder-button">Map Builder Mode</button>
         <button onclick="exportMap()">Export Map</button>

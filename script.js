@@ -1,4 +1,6 @@
 const gridContainer = document.querySelector('.grid-container');
+let GRID_LENGTH = 10;
+let GRID_WIDTH = 10;
 const GRID_SIZE = 100;
 const moveLimit = 3;
 const attackRange = 2;
@@ -16,10 +18,26 @@ const unitMovementPoints = 3;
 let unitCounter = 0;
 
 // Generate grid items
-for (let i = 0; i < GRID_SIZE; i++) {
-    const gridItem = document.createElement('div');
-    gridItem.classList.add('grid-item');
-    gridContainer.appendChild(gridItem);
+function generateGrid(length, width) {
+    gridContainer.style.gridTemplateColumns = `repeat(${width}, 50px)`;
+    gridContainer.style.gridTemplateRows = `repeat(${length}, 50px)`;
+    gridContainer.innerHTML = '';
+    for (let i = 0; i < length * width; i++) {
+        const gridItem = document.createElement('div');
+        gridItem.classList.add('grid-item');
+        gridContainer.appendChild(gridItem);
+    }
+}
+
+generateGrid(GRID_LENGTH, GRID_WIDTH);
+
+function resizeGrid() {
+    const length = parseInt(document.getElementById('grid-length').value);
+    const width = parseInt(document.getElementById('grid-width').value);
+    GRID_LENGTH = length;
+    GRID_WIDTH = width;
+    generateGrid(GRID_LENGTH, GRID_WIDTH);
+    resetGrid();
 }
 
 // Add obstacles
