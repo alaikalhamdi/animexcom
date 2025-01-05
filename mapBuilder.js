@@ -47,7 +47,11 @@ function toggleMapBuilderItem(item) {
 }
 
 function exportMap() {
-    const mapData = [];
+    const mapData = {
+        length: GRID_LENGTH,
+        width: GRID_WIDTH,
+        cells: []
+    };
     document.querySelectorAll('.grid-item').forEach(item => {
         const cellData = {
             unit: item.classList.contains('unit'),
@@ -56,7 +60,7 @@ function exportMap() {
             spawnPoint: item.classList.contains('spawn-point'),
             health: item.getAttribute('data-health')
         };
-        mapData.push(cellData);
+        mapData.cells.push(cellData);
     });
     const json = JSON.stringify(mapData);
     const blob = new Blob([json], { type: 'application/json' });
@@ -73,32 +77,9 @@ function importMap(event) {
     const reader = new FileReader();
     reader.onload = function(e) {
         const mapData = JSON.parse(e.target.result);
-        document.querySelectorAll('.grid-item').forEach((item, index) => {
-            const cellData = mapData[index];
-            item.classList.remove('unit', 'enemy', 'obstacle', 'spawn-point');
-            item.style.backgroundColor = 'lightgray';
-            removeHealthBar(item);
-            if (cellData.unit) {
-                item.classList.add('unit');
-                item.style.backgroundColor = 'blue';
-                item.setAttribute('data-health', cellData.health);
-                addHealthBar(item, cellData.health);
-                totalUnits++;
-            } else if (cellData.enemy) {
-                item.classList.add('enemy');
-                item.style.backgroundColor = 'red';
-                item.setAttribute('data-health', cellData.health);
-                addHealthBar(item, cellData.health);
-            } else if (cellData.obstacle) {
-                item.classList.add('obstacle');
-                item.style.backgroundColor = 'black';
-            } else if (cellData.spawnPoint) {
-                item.classList.add('spawn-point');
-                item.style.backgroundColor = 'green';
-                spawnPoints.push(item);
-            }
-        });
-        updateUnitsLeftDisplay();
+        GRID_LENGTH = mapData.length;
+        GRID_WIDTH = mapData.width;
+        generateGrid(GRID_LENGTH, GRID_WIDTH, mapData.cells);
     };
     reader.readAsText(file);
 }

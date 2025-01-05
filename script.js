@@ -19,7 +19,7 @@ const unitMovementPoints = 3;
 let unitCounter = 0;
 
 // Generate grid items
-function generateGrid(length, width) {
+function generateGrid(length, width, mapData = null) {
     gridContainer.style.gridTemplateColumns = `repeat(${width}, 50px)`;
     gridContainer.style.gridTemplateRows = `repeat(${length}, 50px)`;
     gridContainer.innerHTML = '';
@@ -27,6 +27,31 @@ function generateGrid(length, width) {
         const gridItem = document.createElement('div');
         gridItem.classList.add('grid-item');
         gridContainer.appendChild(gridItem);
+    }
+    if (mapData) {
+        mapData.forEach((cellData, index) => {
+            const item = gridContainer.children[index];
+            if (cellData.unit) {
+                item.classList.add('unit');
+                item.style.backgroundColor = 'blue';
+                item.setAttribute('data-health', cellData.health);
+                addHealthBar(item, cellData.health);
+                totalUnits++;
+            } else if (cellData.enemy) {
+                item.classList.add('enemy');
+                item.style.backgroundColor = 'red';
+                item.setAttribute('data-health', cellData.health);
+                addHealthBar(item, cellData.health);
+            } else if (cellData.obstacle) {
+                item.classList.add('obstacle');
+                item.style.backgroundColor = 'black';
+            } else if (cellData.spawnPoint) {
+                item.classList.add('spawn-point');
+                item.style.backgroundColor = 'green';
+                spawnPoints.push(item);
+            }
+        });
+        updateUnitsLeftDisplay();
     }
 }
 
