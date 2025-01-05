@@ -31,8 +31,15 @@ function toggleMapBuilderItem(item) {
             item.setAttribute('data-health', enemyHealth);
             addHealthBar(item, enemyHealth);
         } else if (type === 'obstacle') {
-            item.classList.add('obstacle');
-            item.style.backgroundColor = 'black';
+            const obtype = prompt('Enter cover type (full/partial):');
+            if (obtype === 'full') {
+                item.classList.add('obstacle');
+                item.classList.add('full-cover');
+                item.style.backgroundColor = 'black';
+            } else if (obtype === 'partial') {
+                item.classList.add('partial-cover');
+                item.style.backgroundColor = 'darkgray';
+            }
         } else if (type === 'spawn-point') {
             item.classList.add('spawn-point');
             item.style.backgroundColor = 'green';
