@@ -1,6 +1,7 @@
 const gridContainer = document.querySelector('.grid-container');
 let GRID_LENGTH = 10;
 let GRID_WIDTH = 10;
+let mapBuilderMode = false;
 const GRID_SIZE = 100;
 const moveLimit = 3;
 const attackRange = 2;
@@ -77,6 +78,15 @@ function addSpawnPoints() {
 
 addObstacles();
 addSpawnPoints();
+
+function switchToMapBuilder() {
+    mapBuilderMode = !mapBuilderMode;
+    const button = document.getElementById('map-builder-button');
+    const mapBuilderControls = document.getElementById('map-builder-controls');
+    button.textContent = mapBuilderMode ? 'Switch to Game Mode' : 'Map Builder Mode';
+    mapBuilderControls.style.display = mapBuilderMode ? 'block' : 'none';
+    console.log(mapBuilderMode ? 'Switched to Map Builder Mode' : 'Switched to Game Mode');
+}
 
 document.querySelectorAll('.grid-item').forEach(item => {
     item.addEventListener('click', () => {
