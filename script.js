@@ -27,9 +27,18 @@ function addObstacles(amount = 10) {
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            randomCell.classList.add('obstacle');
-            randomCell.style.backgroundColor = 'black';
-            console.log('Obstacle added at', randomCell);
+            const isFullCover = Math.random() < 0.5; // 50% chance for full cover
+            if (isFullCover) {
+                randomCell.classList.add('full-cover');
+                randomCell.classList.add('obstacle');
+                randomCell.style.backgroundColor = 'black';
+                console.log('Full cover added at', randomCell);
+            } else {
+                randomCell.classList.add('partial-cover');
+                randomCell.classList.add('obstacle');
+                randomCell.style.backgroundColor = 'darkgray';
+                console.log('Partial cover added at', randomCell);
+            }
         }
     }
 }
@@ -151,7 +160,7 @@ function selectUnit(item) {
 function moveUnit(unit, target) {
     const path = findPath(unit, target);
     const unitMP = parseInt(unit.getAttribute('data-mp'));
-    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
+    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstalce') && target.classList.contains('highlight')) {
         target.classList.add('unit');
         target.style.backgroundColor = 'blue';
         unit.classList.remove('unit');
