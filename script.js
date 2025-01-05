@@ -160,7 +160,7 @@ function selectUnit(item) {
 function moveUnit(unit, target) {
     const path = findPath(unit, target);
     const unitMP = parseInt(unit.getAttribute('data-mp'));
-    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstalce') && target.classList.contains('highlight')) {
+    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
         target.classList.add('unit');
         target.style.backgroundColor = 'blue';
         unit.classList.remove('unit');
@@ -192,7 +192,8 @@ function moveUnit(unit, target) {
 
 function attackEnemy(unit, enemy) {
     let enemyHealth = parseInt(enemy.getAttribute('data-health'));
-    enemyHealth -= attackDamage;
+    const coverBonus = calculateCoverBonus(unit, enemy);
+    enemyHealth -= (attackDamage - coverBonus);
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         enemy.style.backgroundColor = 'lightgray';
@@ -330,8 +331,8 @@ function moveEnemies() {
 
 function attackUnit(enemy, unit) {
     let unitHealth = parseInt(unit.getAttribute('data-health'));
-    console.log('Unit health:', unitHealth);
-    unitHealth -= attackDamage;
+    const coverBonus = calculateCoverBonus(enemy, unit);
+    unitHealth -= (attackDamage - coverBonus);
     if (unitHealth <= 0) {
         unit.classList.remove('unit');
         unit.style.backgroundColor = 'lightgray';
@@ -534,6 +535,29 @@ function findPath(start, end) {
     }
 
     return [];
+}
+
+function calculateCoverBonus(attacker, defender) {
+    const defenderIndex = getCellIndex(defender);
+    const defenderRow = Math.floor(defenderIndex / 10);
+    const defenderCol = defenderIndex % 10;
+
+    const adjacentCells = [
+        document.querySelector(`.grid-container > div:nth-child(${defenderRow * 10 + defenderCol})`),
+        document.querySelector(`.grid-container > div:nth-child(${defenderRow * 10 + defenderCol + 2})`),
+        document.querySelector(`.grid-container > div:nth-child(${(defenderRow - 1) * 10 + defenderCol + 1})`),
+        document.querySelector(`.grid-container > div:nth-child(${(defenderRow + 1) * 10 + defenderCol + 1})`)
+    ];
+
+    for (const cell of adjacentCells) {
+        if (cell && cell.classList.contains('full-cover')) {
+            return 10; // Full cover bonus
+        } else if (cell && cell.classList.contains('partial-cover')) {
+            return 5; // Partial cover bonus
+        }
+    }
+
+    return 0; // No cover
 }
 
 addEnemy(1);
