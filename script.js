@@ -13,6 +13,7 @@ let movedUnits = new Set();
 let spawnPoints = [];
 // Add movement points
 const unitMovementPoints = 3;
+let unitCounter = 0;
 
 // Generate grid items
 for (let i = 0; i < GRID_SIZE; i++) {
@@ -177,11 +178,20 @@ function moveUnit(unit, target) {
             addHealthBar(target, unit.getAttribute('data-health'));
         }
 
+        // Move unit ID
+        const unitIdLabel = unit.querySelector('.unit-id');
+        if (unitIdLabel) {
+            unit.removeChild(unitIdLabel);
+            target.appendChild(unitIdLabel);
+        }
+        
+
         console.log('Unit moved from', unit, 'to', target);
         clearHighlights();
         movedUnits.add(target);
         unitsMoved++;
         updateUnitsLeftDisplay();
+        updateUnitsLeftList();
         if (unitsMoved >= totalUnits) {
             nextTurn();
         }
@@ -233,10 +243,17 @@ function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.style.backgroundColor = 'blue';
     spawnPoint.setAttribute('data-health', unitHealth);
     spawnPoint.setAttribute('data-mp', unitMovementPoints);
+    spawnPoint.setAttribute('data-id', unitCounter);
+    const unitIdLabel = document.createElement('div');
+    unitIdLabel.classList.add('unit-id');
+    unitIdLabel.textContent = unitCounter;
+    spawnPoint.appendChild(unitIdLabel);
     addHealthBar(spawnPoint, unitHealth);
     console.log('Unit added at', spawnPoint);
     totalUnits++;
+    unitCounter++;
     updateUnitsLeftDisplay();
+    updateUnitsLeftList();
     // Remove the spawn point after use
     spawnPoint.classList.remove('spawn-point');
     spawnPoints = spawnPoints.filter(point => point !== spawnPoint);
@@ -261,6 +278,7 @@ function resetGrid() {
         item.classList.remove('spawn-point');
         item.style.backgroundColor = 'lightgray';
         removeHealthBar(item);
+        removeUnitId(item);
     });
     turn = 0;
     totalUnits = 0;
@@ -270,6 +288,7 @@ function resetGrid() {
     spawnPoints = []; // Clear spawn points
     updateTurnDisplay();
     updateUnitsLeftDisplay();
+    updateUnitsLeftList();
     clearHighlights();
     console.log('Grid reset');
     if (!mapBuilderMode) {
@@ -369,6 +388,7 @@ function nextTurn() {
     replenishMovementPoints(); // Replenish movement points for all units
     updateTurnDisplay();
     updateUnitsLeftDisplay();
+    updateUnitsLeftList();
     console.log('Turn', turn);
     moveEnemies();
 }
@@ -453,6 +473,14 @@ function removeHealthBar(cell) {
     }
 }
 
+// removeUnitId function
+function removeUnitId(cell) {
+    const unitIdLabel = cell.querySelector('.unit-id');
+    if (unitIdLabel) {
+        cell.removeChild(unitIdLabel);
+    }
+}
+
 function updateTurnDisplay() {
     document.getElementById('turn-counter').textContent = turn;
 }
@@ -460,6 +488,15 @@ function updateTurnDisplay() {
 function updateUnitsLeftDisplay() {
     const unitsLeft = totalUnits - unitsMoved;
     document.getElementById('units-left-counter').textContent = unitsLeft;
+}
+
+function updateUnitsLeftList() {
+    const unitsLeftList = document.getElementById('units-left-list');
+    const unitsLeft = Array.from(document.querySelectorAll('.grid-item.unit'))
+        .filter(unit => !movedUnits.has(unit))
+        .map(unit => unit.getAttribute('data-id'))
+        .join(', ');
+    unitsLeftList.textContent = unitsLeft;
 }
 
 function checkVictoryCondition() {

@@ -39,6 +39,18 @@
             margin-top: 10px;
             font-weight: bold;
         }
+        .unit-id {
+            position: absolute;
+            top: 0;
+            left: 0;
+            font-size: 12px;
+            color: white;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 2px;
+        }
+        .units-left-list {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -52,6 +64,7 @@
     </div>
     <div class="turn-display">Turn: <span id="turn-counter">0</span></div>
     <div class="units-left-display">Units left to move: <span id="units-left-counter">0</span></div>
+    <div class="units-left-list">Units yet to move: <span id="units-left-list"></span></div>
     <script src="script.js"></script>
     <script src="mapBuilder.js"></script>
 </body>
