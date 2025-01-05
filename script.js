@@ -58,7 +58,14 @@ document.querySelectorAll('.grid-item').forEach(item => {
             console.log('Grid item clicked:', item);
             try {
                 if (selectedUnit) {
-                    if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                    if (selectedUnit === item) {
+                        // Cancel movement if the same unit is clicked again
+                        cancelUnitSelection();
+                    } else if (item.classList.contains('unit')) {
+                        // Select another unit
+                        cancelUnitSelection();
+                        selectUnit(item);
+                    } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                         attackEnemy(selectedUnit, item);
                     } else {
                         moveUnit(selectedUnit, item);
@@ -119,6 +126,15 @@ function handleGridItemMouseOver(item) {
 function handleGridItemMouseOut(item) {
     if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
         item.style.backgroundColor = 'lightgray';
+    }
+}
+
+function cancelUnitSelection() {
+    if (selectedUnit) {
+        selectedUnit.style.backgroundColor = 'blue';
+        clearHighlights();
+        selectedUnit = null;
+        console.log('Unit selection canceled');
     }
 }
 
