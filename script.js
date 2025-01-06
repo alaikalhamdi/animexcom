@@ -18,6 +18,18 @@ let spawnPoints = [];
 const unitMovementPoints = 3;
 let unitCounter = 0;
 
+// Add skill system with cooldown mechanics
+const skills = {
+    heal: { cooldown: 3, effect: healUnit },
+    overwatch: { cooldown: 5, effect: overwatch },
+    aoeAttack: { cooldown: 4, effect: aoeAttack }
+};
+const skillCooldowns = {
+    heal: 0,
+    overwatch: 0,
+    aoeAttack: 0
+};
+
 // Generate grid items
 function generateGrid(length, width, mapData = null) {
     gridContainer.style.gridTemplateColumns = `repeat(${width}, 50px)`;
@@ -444,6 +456,7 @@ function nextTurn() {
     updateUnitsLeftList();
     console.log('Turn', turn);
     moveEnemies();
+    updateSkillCooldowns();
 }
 
 function replenishMovementPoints() {
@@ -648,6 +661,71 @@ function calculateCoverBonus(attacker, defender) {
     }
 
     return 0; // No cover
+}
+
+// Skill system functions
+function useSkill(skillName) {
+    if (skillCooldowns[skillName] > 0) {
+        console.log(`${skillName} is on cooldown for ${skillCooldowns[skillName]} more turns.`);
+        return;
+    }
+    const skill = skills[skillName];
+    if (selectedUnit && skill) {
+        skill.effect(selectedUnit);
+        skillCooldowns[skillName] = skill.cooldown;
+        console.log(`${skillName} used by unit ${selectedUnit.getAttribute('data-id')}`);
+    } else {
+        console.log('No unit selected or invalid skill.');
+    }
+}
+
+function healUnit(unit) {
+    let health = parseInt(unit.getAttribute('data-health'));
+    health = Math.min(health + 20, 100); // Heal 20 health points, max 100
+    unit.setAttribute('data-health', health);
+    updateHealthBar(unit, health);
+    console.log('Unit healed:', unit);
+}
+
+function overwatch(unit) {
+    unit.classList.add('overwatch');
+    console.log('Unit set to overwatch:', unit);
+}
+
+function aoeAttack(unit) {
+    const unitIndex = getCellIndex(unit);
+    const unitRow = Math.floor(unitIndex / 10);
+    const unitCol = unitIndex % 10;
+
+    for (let row = unitRow - 1; row <= unitRow + 1; row++) {
+        for (let col = unitCol - 1; col <= unitCol + 1; col++) {
+            if (row >= 0 && row < 10 && col >= 0 && col < 10) {
+                const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
+                if (cell.classList.contains('enemy')) {
+                    let enemyHealth = parseInt(cell.getAttribute('data-health'));
+                    enemyHealth -= 15; // AOE attack deals 15 damage
+                    if (enemyHealth <= 0) {
+                        cell.classList.remove('enemy');
+                        cell.style.backgroundColor = 'lightgray';
+                        removeHealthBar(cell);
+                        console.log('Enemy defeated by AOE attack at', cell);
+                    } else {
+                        cell.setAttribute('data-health', enemyHealth);
+                        updateHealthBar(cell, enemyHealth);
+                        console.log('Enemy hit by AOE attack at', cell, 'remaining health:', enemyHealth);
+                    }
+                }
+            }
+        }
+    }
+}
+
+function updateSkillCooldowns() {
+    for (const skill in skillCooldowns) {
+        if (skillCooldowns[skill] > 0) {
+            skillCooldowns[skill]--;
+        }
+    }
 }
 
 addEnemy(1);
