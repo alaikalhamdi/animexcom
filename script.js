@@ -14,11 +14,9 @@ let selectedUnit = null;
 let turn = 0;
 let movedUnits = new Set();
 let spawnPoints = [];
-// Add movement points
 const unitMovementPoints = 3;
 let unitCounter = 0;
 
-// Add skill system with cooldown mechanics
 const skills = {
     heal: { cooldown: 3, effect: healUnit },
     overwatch: { cooldown: 5, effect: overwatch },
@@ -30,7 +28,6 @@ const skillCooldowns = {
     aoeAttack: 0
 };
 
-// Generate grid items
 function generateGrid(length, width, mapData = null) {
     gridContainer.style.gridTemplateColumns = `repeat(${width}, 50px)`;
     gridContainer.style.gridTemplateRows = `repeat(${length}, 50px)`;
@@ -78,21 +75,18 @@ function resizeGrid() {
     resetGrid();
 }
 
-// Add obstacles
 function addObstacles(amount = 10) {
     const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
-            const isFullCover = Math.random() < 0.5; // 50% chance for full cover
+            const isFullCover = Math.random() < 0.5;
             if (isFullCover) {
-                randomCell.classList.add('full-cover');
-                randomCell.classList.add('obstacle');
+                randomCell.classList.add('full-cover', 'obstacle');
                 randomCell.style.backgroundColor = 'black';
                 console.log('Full cover added at', randomCell);
             } else {
-                randomCell.classList.add('partial-cover');
-                randomCell.classList.add('obstacle');
+                randomCell.classList.add('partial-cover', 'obstacle');
                 randomCell.style.backgroundColor = 'darkgray';
                 console.log('Partial cover added at', randomCell);
             }
@@ -100,9 +94,8 @@ function addObstacles(amount = 10) {
     }
 }
 
-// Add spawn points
 function addSpawnPoints() {
-    const row = Math.floor(Math.random() * 10); // Random row
+    const row = Math.floor(Math.random() * 10);
     for (let col = 0; col < 3; col++) {
         const index = row * 10 + col;
         const spawnPoint = document.querySelector(`.grid-container > div:nth-child(${index + 1})`);
@@ -126,48 +119,9 @@ function switchToMapBuilder() {
 }
 
 document.querySelectorAll('.grid-item').forEach(item => {
-    item.addEventListener('click', () => {
-        if (mapBuilderMode) {
-            toggleMapBuilderItem(item);
-        } else {
-            console.log('Grid item clicked:', item);
-            try {
-                if (selectedUnit) {
-                    if (selectedUnit === item) {
-                        // Cancel movement if the same unit is clicked again
-                        cancelUnitSelection();
-                    } else if (item.classList.contains('unit')) {
-                        // Select another unit
-                        cancelUnitSelection();
-                        selectUnit(item);
-                    } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
-                        attackEnemy(selectedUnit, item);
-                    } else {
-                        moveUnit(selectedUnit, item);
-                    }
-                    selectedUnit = null;
-                } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
-                    addUnitToSpawnPoint(item);
-                } else {
-                    selectUnit(item);
-                }
-            } catch (error) {
-                console.error('Error moving unit:', error);
-            }
-        }
-    });
-
-    item.addEventListener('mouseover', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
-            item.style.backgroundColor = 'lightblue';
-        }
-    });
-
-    item.addEventListener('mouseout', () => {
-        if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
-            item.style.backgroundColor = 'lightgray';
-        }
-    });
+    item.addEventListener('click', () => handleGridItemClick(item));
+    item.addEventListener('mouseover', () => handleGridItemMouseOver(item));
+    item.addEventListener('mouseout', () => handleGridItemMouseOut(item));
 });
 
 function handleGridItemClick(item) {
@@ -177,12 +131,19 @@ function handleGridItemClick(item) {
         console.log('Grid item clicked:', item);
         try {
             if (selectedUnit) {
-                if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                if (selectedUnit === item) {
+                    cancelUnitSelection();
+                } else if (item.classList.contains('unit')) {
+                    cancelUnitSelection();
+                    selectUnit(item);
+                } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                     attackEnemy(selectedUnit, item);
                 } else {
                     moveUnit(selectedUnit, item);
                 }
                 selectedUnit = null;
+            } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
+                addUnitToSpawnPoint(item);
             } else {
                 selectUnit(item);
             }
@@ -193,13 +154,13 @@ function handleGridItemClick(item) {
 }
 
 function handleGridItemMouseOver(item) {
-    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
         item.style.backgroundColor = 'lightblue';
     }
 }
 
 function handleGridItemMouseOut(item) {
-    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle')) {
+    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
         item.style.backgroundColor = 'lightgray';
     }
 }
@@ -234,7 +195,6 @@ function moveUnit(unit, target) {
         target.setAttribute('data-health', unit.getAttribute('data-health'));
         target.setAttribute('data-mp', unitMP - (path.length - 1));
 
-        // Move health bar
         const healthBar = unit.querySelector('.health-bar');
         if (healthBar) {
             unit.removeChild(healthBar);
@@ -243,13 +203,11 @@ function moveUnit(unit, target) {
             addHealthBar(target, unit.getAttribute('data-health'));
         }
 
-        // Move unit ID
         const unitIdLabel = unit.querySelector('.unit-id');
         if (unitIdLabel) {
             unit.removeChild(unitIdLabel);
             target.appendChild(unitIdLabel);
         }
-        
 
         console.log('Unit moved from', unit, 'to', target);
         clearHighlights();
@@ -283,26 +241,6 @@ function attackEnemy(unit, enemy) {
     clearHighlights();
 }
 
-function addUnit() {
-    const emptySpawnPoints = spawnPoints.filter(point => !point.classList.contains('unit'));
-    if (emptySpawnPoints.length > 0) {
-        const randomCell = emptySpawnPoints[Math.floor(Math.random() * emptySpawnPoints.length)];
-        randomCell.classList.add('unit');
-        randomCell.style.backgroundColor = 'blue';
-        randomCell.setAttribute('data-health', unitHealth);
-        addHealthBar(randomCell, unitHealth);
-        console.log('Unit added at', randomCell);
-        totalUnits++;
-        updateUnitsLeftDisplay();
-        // Remove the spawn point after use
-        randomCell.classList.remove('spawn-point');
-        randomCell.style.backgroundColor = 'lightgray';
-        spawnPoints = spawnPoints.filter(point => point !== randomCell);
-    } else {
-        console.log('No empty spawn points available');
-    }
-}
-
 function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.classList.add('unit');
     spawnPoint.style.backgroundColor = 'blue';
@@ -319,28 +257,13 @@ function addUnitToSpawnPoint(spawnPoint) {
     unitCounter++;
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
-    // Remove the spawn point after use
     spawnPoint.classList.remove('spawn-point');
     spawnPoints = spawnPoints.filter(point => point !== spawnPoint);
 }
 
-function removeUnit() {
-    const units = document.querySelectorAll('.grid-item.unit');
-    if (units.length > 0) {
-        const randomUnit = units[Math.floor(Math.random() * units.length)];
-        randomUnit.classList.remove('unit');
-        randomUnit.style.backgroundColor = 'lightgray';
-        removeHealthBar(randomUnit);
-        console.log('Unit removed from', randomUnit);
-    }
-}
-
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit');
-        item.classList.remove('enemy');
-        item.classList.remove('obstacle');
-        item.classList.remove('spawn-point');
+        item.classList.remove('unit', 'enemy', 'obstacle', 'spawn-point');
         item.style.backgroundColor = 'lightgray';
         removeHealthBar(item);
         removeUnitId(item);
@@ -348,18 +271,19 @@ function resetGrid() {
     turn = 0;
     totalUnits = 0;
     unitsMoved = 0;
-    selectedUnit = null; // Reset selected unit
-    movedUnits.clear(); // Clear moved units
-    spawnPoints = []; // Clear spawn points
+    unitCounter = 0;
+    selectedUnit = null;
+    movedUnits.clear();
+    spawnPoints = [];
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
     clearHighlights();
     console.log('Grid reset');
     if (!mapBuilderMode) {
-        addObstacles(); // Regenerate obstacles
-        addSpawnPoints(); // Regenerate spawn points
-        addEnemy(1); // Add an enemy after resetting the grid
+        addObstacles();
+        addSpawnPoints();
+        addEnemy(1);
     }
 }
 
@@ -449,8 +373,8 @@ function addEnemy(amount = 1) {
 function nextTurn() {
     turn++;
     unitsMoved = 0;
-    movedUnits.clear(); // Clear moved units for the new turn
-    replenishMovementPoints(); // Replenish movement points for all units
+    movedUnits.clear();
+    replenishMovementPoints();
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
@@ -539,7 +463,6 @@ function removeHealthBar(cell) {
     }
 }
 
-// removeUnitId function
 function removeUnitId(cell) {
     const unitIdLabel = cell.querySelector('.unit-id');
     if (unitIdLabel) {
