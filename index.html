@@ -58,23 +58,51 @@
     <div class="controls">
         <div id="map-builder-controls" style="display: none;">
             <label for="grid-length">Grid Length:</label>
-            <input type="number" id="grid-length" value="10" min="1" onchange="resizeGrid()">
+            <input type="number" id="grid-length" value="10" min="1">
             <label for="grid-width">Grid Width:</label>
-            <input type="number" id="grid-width" value="10" min="1" onchange="resizeGrid()">
+            <input type="number" id="grid-width" value="10" min="1">
         </div>
-        <button onclick="resetGrid()">Reset Grid</button>
+        <button id="resetGrid">Reset Grid</button>
         <button onclick="switchToMapBuilder()" id="map-builder-button">Map Builder Mode</button>
         <button onclick="exportMap()">Export Map</button>
         <input type="file" id="importMapInput" onchange="importMap(event)" style="display: none;">
         <button onclick="document.getElementById('importMapInput').click()">Import Map</button>
-        <button onclick="useSkill('heal')">Heal</button>
-        <button onclick="useSkill('overwatch')">Overwatch</button>
-        <button onclick="useSkill('aoeAttack')">AOE Attack</button>
+        <button id="heal">Heal</button>
+        <button id="overwatch">Overwatch</button>
+        <button id="aoeAttack">AOE Attack</button>
     </div>
     <div class="turn-display">Turn: <span id="turn-counter">0</span></div>
     <div class="units-left-display">Units left to move: <span id="units-left-counter">0</span></div>
     <div class="units-left-list">Units yet to move: <span id="units-left-list"></span></div>
-    <script src="script.js"></script>
+    <script type="module" src="main.js"></script>
     <script src="mapBuilder.js"></script>
+    <script>
+        const GRID_SIZE = 100;
+        const moveLimit  = 3;
+        const attackRange = 2;
+        const unitHealth = 50;
+        const enemyHealth = 50;
+        const attackDamage = 20;
+        const unitMovementPoints = 3;   
+        let GRID_LENGTH = 10;
+        let GRID_WIDTH = 10;
+        let mapBuilderMode = false;
+        let unitsMoved = 0;
+        let totalUnits = 0;
+        let selectedUnit = null;
+        let turn = 0;
+        let movedUnits = new Set();
+        let spawnPoints = [];
+        let unitCounter = 0;
+
+        function switchToMapBuilder() {
+            mapBuilderMode = !mapBuilderMode;
+            const button = document.getElementById('map-builder-button');
+            const mapBuilderControls = document.getElementById('map-builder-controls');
+            button.textContent = mapBuilderMode ? 'Switch to Game Mode' : 'Map Builder Mode';
+            mapBuilderControls.style.display = mapBuilderMode ? 'block' : 'none';
+            console.log(mapBuilderMode ? 'Switched to Map Builder Mode' : 'Switched to Game Mode');
+        }
+    </script>
 </body>
 </html>

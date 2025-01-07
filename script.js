@@ -1,20 +1,20 @@
 const gridContainer = document.querySelector('.grid-container');
-let GRID_LENGTH = 10;
-let GRID_WIDTH = 10;
-let mapBuilderMode = false;
 const GRID_SIZE = 100;
 const moveLimit = 3;
 const attackRange = 2;
 const unitHealth = 50;
 const enemyHealth = 50;
 const attackDamage = 20;
+const unitMovementPoints = 3;
+let GRID_LENGTH = 10;
+let GRID_WIDTH = 10;
+let mapBuilderMode = false;
 let unitsMoved = 0;
 let totalUnits = 0;
 let selectedUnit = null;
 let turn = 0;
 let movedUnits = new Set();
 let spawnPoints = [];
-const unitMovementPoints = 3;
 let unitCounter = 0;
 
 const skills = {
