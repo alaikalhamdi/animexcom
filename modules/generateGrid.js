@@ -1,4 +1,4 @@
-import { updateTurnDisplay, updateUnitsLeftDisplay, updateUnitsLeftList, removeHealthBar, removeUnitId, clearHighlights } from "./ui.js";
+import { updateTurnDisplay, updateUnitsLeftDisplay, updateUnitsLeftList, removeHealthBar, removeUnitId, clearHighlights, addHealthBar } from "./ui.js";
 import { addEnemy } from "./enemies.js";
 
 const gridContainer = document.querySelector('.grid-container');

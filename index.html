@@ -64,8 +64,8 @@
         </div>
         <button id="resetGrid">Reset Grid</button>
         <button onclick="switchToMapBuilder()" id="map-builder-button">Map Builder Mode</button>
-        <button onclick="exportMap()">Export Map</button>
-        <input type="file" id="importMapInput" onchange="importMap(event)" style="display: none;">
+        <button id="exportMap">Export Map</button>
+        <input type="file" id="importMapInput" style="display: none;">
         <button onclick="document.getElementById('importMapInput').click()">Import Map</button>
         <button id="heal">Heal</button>
         <button id="overwatch">Overwatch</button>
@@ -75,7 +75,6 @@
     <div class="units-left-display">Units left to move: <span id="units-left-counter">0</span></div>
     <div class="units-left-list">Units yet to move: <span id="units-left-list"></span></div>
     <script type="module" src="main.js"></script>
-    <script src="mapBuilder.js"></script>
     <script>
         const GRID_SIZE = 100;
         const moveLimit  = 3;

@@ -2,6 +2,7 @@ import { generateGrid, addObstacles, addSpawnPoints, resetGrid, resizeGrid } fro
 import { handleGridItemClick, handleGridItemMouseOver, handleGridItemMouseOut } from './modules/ui.js';
 import { useSkill } from './modules/skill.js';
 import { addEnemy } from './modules/enemies.js';
+import { importMap, exportMap } from './mapBuilder.js';
 
 let GRID_LENGTH = 10;
 let GRID_WIDTH = 10;
@@ -26,3 +27,6 @@ document.getElementById('resetGrid').addEventListener('click', () => resetGrid()
 
 document.getElementById('grid-length').addEventListener('change', resizeGrid);
 document.getElementById('grid-width').addEventListener('change', resizeGrid);
+
+document.getElementById('importMapInput').addEventListener('change', e => importMap(e));
+document.getElementById('exportMap').addEventListener('click', () => exportMap());

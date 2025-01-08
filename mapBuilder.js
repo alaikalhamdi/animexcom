@@ -1,3 +1,6 @@
+import { addHealthBar, removeHealthBar, updateUnitsLeftDisplay } from './modules/ui.js';
+import { generateGrid } from './modules/generateGrid.js';
+
 function toggleMapBuilderItem(item) {
     if (item.classList.contains('unit')) {
         item.classList.remove('unit');
@@ -83,3 +86,5 @@ function importMap(event) {
     };
     reader.readAsText(file);
 }
+
+export { toggleMapBuilderItem, exportMap, importMap };
