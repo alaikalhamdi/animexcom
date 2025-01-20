@@ -1,7 +1,3 @@
-import { updateTurnDisplay, updateUnitsLeftDisplay, updateUnitsLeftList, removeHealthBar, removeUnitId, clearHighlights } from "./ui.js";
-import { moveEnemies, addEnemy } from "./enemies.js";
-import { updateSkillCooldowns } from "./skill.js";
-
 function getCellIndex(cell) {
     return Array.from(cell.parentNode.children).indexOf(cell);
 }
@@ -47,5 +43,3 @@ function calculateCoverBonus(attacker, defender) {
 
     return 0; // No cover
 }
-
-export { getCellIndex, nextTurn, replenishMovementPoints, calculateCoverBonus };

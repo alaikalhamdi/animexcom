@@ -74,34 +74,15 @@
     <div class="turn-display">Turn: <span id="turn-counter">0</span></div>
     <div class="units-left-display">Units left to move: <span id="units-left-counter">0</span></div>
     <div class="units-left-list">Units yet to move: <span id="units-left-list"></span></div>
-    <script type="module" src="main.js"></script>
+    <script src="modules/enemies.js"></script>
+    <script src="modules/extra.js"></script>
+    <script src="modules/generateGrid.js"></script>
+    <script src="modules/skill.js"></script>
+    <script src="modules/unit.js"></script>
+    <script src="modules/ui.js"></script>
+    <script src="mapBuilder.js"></script>
+    <script src="main.js"></script>
     <script>
-        const GRID_SIZE = 100;
-        const moveLimit  = 3;
-        const attackRange = 2;
-        const unitHealth = 50;
-        const enemyHealth = 50;
-        const attackDamage = 20;
-        const unitMovementPoints = 3;   
-        let GRID_LENGTH = 10;
-        let GRID_WIDTH = 10;
-        let mapBuilderMode = false;
-        let unitsMoved = 0;
-        let totalUnits = 0;
-        let selectedUnit = null;
-        let turn = 0;
-        let movedUnits = new Set();
-        let spawnPoints = [];
-        let unitCounter = 0;
-
-        function switchToMapBuilder() {
-            mapBuilderMode = !mapBuilderMode;
-            const button = document.getElementById('map-builder-button');
-            const mapBuilderControls = document.getElementById('map-builder-controls');
-            button.textContent = mapBuilderMode ? 'Switch to Game Mode' : 'Map Builder Mode';
-            mapBuilderControls.style.display = mapBuilderMode ? 'block' : 'none';
-            console.log(mapBuilderMode ? 'Switched to Map Builder Mode' : 'Switched to Game Mode');
-        }
     </script>
 </body>
 </html>

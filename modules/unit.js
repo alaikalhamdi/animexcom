@@ -1,6 +1,3 @@
-import { addHealthBar, updateUnitsLeftDisplay, updateUnitsLeftList, highlightMoves, highlightAttackRange, clearHighlights, updateHealthBar, removeHealthBar, checkVictoryCondition } from "./ui.js";
-import { getCellIndex, nextTurn, calculateCoverBonus } from "./extra.js";
-
 function cancelUnitSelection() {
     if (selectedUnit) {
         selectedUnit.style.backgroundColor = 'blue';
@@ -145,5 +142,3 @@ function findPath(start, end) {
 
     return [];
 }
-
-export { cancelUnitSelection, selectUnit, moveUnit, attackEnemy, addUnitToSpawnPoint, findPath };

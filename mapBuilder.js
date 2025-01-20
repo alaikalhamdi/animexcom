@@ -1,5 +1,11 @@
-import { addHealthBar, removeHealthBar, updateUnitsLeftDisplay } from './modules/ui.js';
-import { generateGrid } from './modules/generateGrid.js';
+function switchToMapBuilder() {
+    mapBuilderMode = !mapBuilderMode;
+    const button = document.getElementById('map-builder-button');
+    const mapBuilderControls = document.getElementById('map-builder-controls');
+    button.textContent = mapBuilderMode ? 'Switch to Game Mode' : 'Map Builder Mode';
+    mapBuilderControls.style.display = mapBuilderMode ? 'block' : 'none';
+    console.log(mapBuilderMode ? 'Switched to Map Builder Mode' : 'Switched to Game Mode');
+}
 
 function toggleMapBuilderItem(item) {
     if (item.classList.contains('unit')) {
@@ -86,5 +92,3 @@ function importMap(event) {
     };
     reader.readAsText(file);
 }
-
-export { toggleMapBuilderItem, exportMap, importMap };

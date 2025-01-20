@@ -1,6 +1,3 @@
-import { getCellIndex, calculateCoverBonus } from "./extra.js";
-import { addHealthBar, removeHealthBar, updateHealthBar, updateUnitsLeftDisplay, checkDefeatCondition } from "./ui.js";
-
 function moveEnemies() {
     const units = document.querySelectorAll('.grid-item.unit');
     const enemies = document.querySelectorAll('.grid-item.enemy');
@@ -83,5 +80,3 @@ function addEnemy(amount = 1) {
         }
     }
 }
-
-export { moveEnemies, attackUnit, addEnemy };

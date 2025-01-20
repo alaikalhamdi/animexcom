@@ -1,6 +1,3 @@
-import { updateHealthBar } from "./ui.js";
-import { getCellIndex } from "./extra.js";
-
 const skills = {
     heal: { cooldown: 3, effect: healUnit },
     overwatch: { cooldown: 5, effect: overwatch },
@@ -75,5 +72,3 @@ function updateSkillCooldowns() {
         }
     }
 }
-
-export {useSkill, healUnit, aoeAttack, overwatch, updateSkillCooldowns}

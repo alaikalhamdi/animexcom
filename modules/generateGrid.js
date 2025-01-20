@@ -1,6 +1,3 @@
-import { updateTurnDisplay, updateUnitsLeftDisplay, updateUnitsLeftList, removeHealthBar, removeUnitId, clearHighlights, addHealthBar } from "./ui.js";
-import { addEnemy } from "./enemies.js";
-
 const gridContainer = document.querySelector('.grid-container');
 
 let spawnPoints = [];
@@ -106,6 +103,3 @@ function resetGrid() {
         addEnemy(1);
     }
 }
-
-
-export { generateGrid, addObstacles, addSpawnPoints, resizeGrid, resetGrid };

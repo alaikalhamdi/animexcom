@@ -1,7 +1,3 @@
-import { addUnitToSpawnPoint, selectUnit, findPath, moveUnit, cancelUnitSelection, attackEnemy } from "./unit.js";
-import { getCellIndex } from "./extra.js";
-import { resetGrid } from "./generateGrid.js";
-
 function handleGridItemClick(item) {
     if (mapBuilderMode) {
         toggleMapBuilderItem(item);
@@ -153,11 +149,3 @@ function clearHighlights() {
         item.classList.remove('attack-range');
     });
 }
-
-export { 
-    handleGridItemClick, handleGridItemMouseOver, handleGridItemMouseOut, 
-    addHealthBar, updateHealthBar, removeHealthBar, 
-    removeUnitId, updateTurnDisplay, updateUnitsLeftDisplay, updateUnitsLeftList, 
-    checkVictoryCondition, checkDefeatCondition, 
-    highlightMoves, highlightAttackRange, clearHighlights
- };
