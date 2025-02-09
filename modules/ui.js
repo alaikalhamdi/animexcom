@@ -38,9 +38,7 @@ function handleGridItemClick(item) {
                     console.log('Clearing move confirmations');
                     document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
                         tile.classList.remove('confirm-move');
-                        tile.style.backgroundColor = 'lightblue';
                     });
-                    selectedUnit = null;
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
                 console.log('Adding unit to spawn point');
@@ -160,6 +158,9 @@ function highlightAttackRange(unit) {
 function clearHighlights() {
     document.querySelectorAll('.grid-item.highlight').forEach(item => {
         item.classList.remove('highlight');
+    });
+    document.querySelectorAll('.grid-item.confirm-move').forEach(item => {
+        item.classList.remove('confirm-move');
     });
     document.querySelectorAll('.grid-item.attack-range').forEach(item => {
         item.classList.remove('attack-range');
