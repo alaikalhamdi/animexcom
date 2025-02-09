@@ -31,7 +31,6 @@ function handleGridItemClick(item) {
                         console.log('Highlighting move confirmation');
                         document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
                             tile.classList.remove('confirm-move');
-                            tile.style.backgroundColor = 'lightblue';
                         });
                         item.classList.add('confirm-move');
                     }
