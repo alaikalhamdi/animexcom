@@ -1,9 +1,18 @@
+function toggleButtons(show) {
+    const displayStyle = show ? 'inline-block' : 'none';
+    document.querySelectorAll('.skill-button').forEach(button => {
+        button.style.display = displayStyle;
+    });
+    document.getElementById('skip-turn-button').style.display = displayStyle;
+}
+
 function cancelUnitSelection() {
     if (selectedUnit) {
         selectedUnit.style.backgroundColor = 'blue';
         clearHighlights();
         selectedUnit = null;
         console.log('Unit selection canceled');
+        toggleButtons(false);
     }
 }
 
@@ -14,6 +23,7 @@ function selectUnit(item) {
         console.log('Unit selected:', item);
         highlightMoves(item);
         highlightAttackRange(item);
+        toggleButtons(true);
     }
 }
 
@@ -51,6 +61,7 @@ function moveUnit(unit, target) {
         if (unitsMoved >= totalUnits) {
             nextTurn();
         }
+        toggleButtons(false);
     } else {
         throw new Error('Invalid move');
     }
@@ -72,6 +83,7 @@ function attackEnemy(unit, enemy) {
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
     }
     clearHighlights();
+    toggleButtons(false);
 }
 
 function addUnitToSpawnPoint(spawnPoint) {
@@ -141,4 +153,18 @@ function findPath(start, end) {
     }
 
     return [];
+}
+
+function skipTurn() {
+    if (selectedUnit) {
+        console.log('Turn skipped for unit:', selectedUnit);
+        movedUnits.add(selectedUnit);
+        unitsMoved++;
+        updateUnitsLeftDisplay();
+        updateUnitsLeftList();
+        if (unitsMoved >= totalUnits) {
+            nextTurn();
+        }
+        cancelUnitSelection();
+    }
 }
