@@ -1,41 +1,58 @@
+let lastClickedTile = null;
+
 function handleGridItemClick(item) {
+    console.log('Grid item clicked:', item);
     if (mapBuilderMode) {
+        console.log('Map builder mode active');
         toggleMapBuilderItem(item);
     } else {
-        console.log('Grid item clicked:', item);
         try {
             if (selectedUnit) {
+                console.log('Selected unit:', selectedUnit);
                 if (selectedUnit === item) {
+                    console.log('Cancelling unit selection');
                     cancelUnitSelection();
+                    selectedUnit = null;
                 } else if (item.classList.contains('unit')) {
+                    console.log('Selecting new unit');
                     cancelUnitSelection();
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                    console.log('Attacking enemy');
                     attackEnemy(selectedUnit, item);
+                    selectedUnit = null;
+                } else if (item.classList.contains('highlight')) {
+                    if (item.classList.contains('confirm-move')) {
+                        console.log('Moving unit to confirmed position');
+                        moveUnit(selectedUnit, item);
+                        item.classList.remove('confirm-move');
+                        selectedUnit = null;
+                    } else {
+                        console.log('Highlighting move confirmation');
+                        document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
+                            tile.classList.remove('confirm-move');
+                            tile.style.backgroundColor = 'lightblue';
+                        });
+                        item.classList.add('confirm-move');
+                    }
                 } else {
-                    moveUnit(selectedUnit, item);
+                    console.log('Clearing move confirmations');
+                    document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
+                        tile.classList.remove('confirm-move');
+                        tile.style.backgroundColor = 'lightblue';
+                    });
+                    selectedUnit = null;
                 }
-                selectedUnit = null;
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
+                console.log('Adding unit to spawn point');
                 addUnitToSpawnPoint(item);
             } else {
+                console.log('Selecting unit');
                 selectUnit(item);
             }
         } catch (error) {
-            console.error('Error moving unit:', error);
+            console.error('Error handling grid item click:', error);
         }
-    }
-}
-
-function handleGridItemMouseOver(item) {
-    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
-        item.style.backgroundColor = 'lightblue';
-    }
-}
-
-function handleGridItemMouseOut(item) {
-    if (selectedUnit && !item.classList.contains('unit') && !item.classList.contains('enemy') && !item.classList.contains('obstacle') && !item.classList.contains('spawn-point')) {
-        item.style.backgroundColor = 'lightgray';
     }
 }
 

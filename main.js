@@ -22,8 +22,6 @@ addEnemy(1);
 
 document.querySelectorAll('.grid-item').forEach(item => {
     item.addEventListener('click', () => handleGridItemClick(item));
-    item.addEventListener('mouseover', () => handleGridItemMouseOver(item));
-    item.addEventListener('mouseout', () => handleGridItemMouseOut(item));
 });
 
 ['heal', 'overwatch', 'aoeAttack'].forEach(skill => {
