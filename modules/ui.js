@@ -1,4 +1,5 @@
 let lastClickedTile = null;
+let isConfirming = false;
 
 function handleGridItemClick(item) {
     console.log('Grid item clicked:', item);
@@ -18,6 +19,10 @@ function handleGridItemClick(item) {
                     cancelUnitSelection();
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
+                    const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
+                    if (confirmMoveGrid) {
+                        moveUnit(selectedUnit, confirmMoveGrid);
+                    }
                     console.log('Attacking enemy');
                     attackEnemy(selectedUnit, item);
                     selectedUnit = null;
@@ -29,18 +34,14 @@ function handleGridItemClick(item) {
                         selectedUnit = null;
                     } else {
                         console.log('Highlighting move confirmation');
-                        document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
-                            tile.classList.remove('confirm-move');
-                        });
+                        clearHighlights('confirm-move');
                         item.classList.add('confirm-move');
                         clearHighlights('attack-range');
                         highlightAttackRange(item);
                     }
                 } else {
                     console.log('Clearing move confirmations');
-                    document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
-                        tile.classList.remove('confirm-move');
-                    });
+                    clearHighlights('confirm-move');
                     clearHighlights('attack-range');
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
