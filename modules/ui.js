@@ -20,11 +20,11 @@ function handleGridItemClick(item) {
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                     const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
+                    console.log('Attacking enemy');
+                    attackEnemy(selectedUnit, item);
                     if (confirmMoveGrid) {
                         moveUnit(selectedUnit, confirmMoveGrid);
                     }
-                    console.log('Attacking enemy');
-                    attackEnemy(selectedUnit, item);
                     selectedUnit = null;
                 } else if (item.classList.contains('highlight')) {
                     if (item.classList.contains('confirm-move')) {

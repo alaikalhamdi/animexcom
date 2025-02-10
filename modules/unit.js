@@ -8,7 +8,7 @@ function toggleButtons(show) {
 
 function cancelUnitSelection() {
     if (selectedUnit) {
-        selectedUnit.style.backgroundColor = 'blue';
+        selectedUnit.classList.remove('selected');
         clearHighlights();
         selectedUnit = null;
         console.log('Unit selection canceled');
@@ -19,7 +19,7 @@ function cancelUnitSelection() {
 function selectUnit(item) {
     if (item.classList.contains('unit')) {
         selectedUnit = item;
-        item.style.backgroundColor = 'yellow';
+        item.classList.add('selected');
         console.log('Unit selected:', item);
         highlightMoves(item);
         highlightAttackRange(item);
@@ -32,9 +32,9 @@ function moveUnit(unit, target) {
     const unitMP = parseInt(unit.getAttribute('data-mp'));
     if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
         target.classList.add('unit');
-        target.style.backgroundColor = 'blue';
         unit.classList.remove('unit');
-        unit.style.backgroundColor = 'lightgray';
+        unit.classList.remove('selected');
+        target.setAttribute('data-id', unit.getAttribute('data-id'));
         target.setAttribute('data-health', unit.getAttribute('data-health'));
         target.setAttribute('data-mp', unitMP - (path.length - 1));
 
@@ -73,7 +73,6 @@ function attackEnemy(unit, enemy) {
     enemyHealth -= (attackDamage - coverBonus);
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
-        enemy.style.backgroundColor = 'lightgray';
         console.log('Enemy defeated by', unit, 'at', enemy);
         removeHealthBar(enemy);
         checkVictoryCondition();
@@ -88,7 +87,6 @@ function attackEnemy(unit, enemy) {
 
 function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.classList.add('unit');
-    spawnPoint.style.backgroundColor = 'blue';
     spawnPoint.setAttribute('data-health', unitHealth);
     spawnPoint.setAttribute('data-mp', unitMovementPoints);
     spawnPoint.setAttribute('data-id', unitCounter);

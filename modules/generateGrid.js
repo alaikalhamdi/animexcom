@@ -16,13 +16,11 @@ function generateGrid(length, width, mapData = null) {
             const item = gridContainer.children[index];
             if (cellData.unit) {
                 item.classList.add('unit');
-                item.style.backgroundColor = 'blue';
                 item.setAttribute('data-health', cellData.health);
                 addHealthBar(item, cellData.health);
                 totalUnits++;
             } else if (cellData.enemy) {
                 item.classList.add('enemy');
-                item.style.backgroundColor = 'red';
                 item.setAttribute('data-health', cellData.health);
                 addHealthBar(item, cellData.health);
             } else if (cellData.obstacle) {
@@ -30,7 +28,6 @@ function generateGrid(length, width, mapData = null) {
                 item.style.backgroundColor = 'black';
             } else if (cellData.spawnPoint) {
                 item.classList.add('spawn-point');
-                item.style.backgroundColor = 'green';
                 spawnPoints.push(item);
             }
         });
@@ -46,11 +43,9 @@ function addObstacles(amount = 10) {
             const isFullCover = Math.random() < 0.5;
             if (isFullCover) {
                 randomCell.classList.add('full-cover', 'obstacle');
-                randomCell.style.backgroundColor = 'black';
                 console.log('Full cover added at', randomCell);
             } else {
                 randomCell.classList.add('partial-cover', 'obstacle');
-                randomCell.style.backgroundColor = 'darkgray';
                 console.log('Partial cover added at', randomCell);
             }
         }
@@ -86,8 +81,7 @@ function resizeGrid() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit', 'enemy', 'obstacle', 'spawn-point');
-        item.style.backgroundColor = 'lightgray';
+        item.classList.remove('unit', 'enemy', 'obstacle', 'partial-cover', 'full-cover', 'spawn-point');
         removeHealthBar(item);
         removeUnitId(item);
     });

@@ -36,11 +36,9 @@ function moveEnemies() {
                 attackUnit(enemy, newCell);
             } else if (!newCell.classList.contains('enemy') && !newCell.classList.contains('obstacle')) {
                 newCell.classList.add('enemy');
-                newCell.style.backgroundColor = 'red';
                 newCell.setAttribute('data-health', enemy.getAttribute('data-health'));
                 addHealthBar(newCell, enemy.getAttribute('data-health'));
                 enemy.classList.remove('enemy');
-                enemy.style.backgroundColor = 'lightgray';
                 removeHealthBar(enemy);
                 console.log('Enemy moved from', enemy, 'to', newCell);
             }
@@ -54,7 +52,6 @@ function attackUnit(enemy, unit) {
     unitHealth -= (attackDamage - coverBonus);
     if (unitHealth <= 0) {
         unit.classList.remove('unit');
-        unit.style.backgroundColor = 'lightgray';
         console.log('Unit defeated by', enemy, 'at', unit);
         removeHealthBar(unit);
         totalUnits--;
@@ -73,7 +70,6 @@ function addEnemy(amount = 1) {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add('enemy');
-            randomCell.style.backgroundColor = 'red';
             randomCell.setAttribute('data-health', enemyHealth);
             addHealthBar(randomCell, enemyHealth);
             console.log('Enemy added at', randomCell);
