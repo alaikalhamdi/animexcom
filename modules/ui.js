@@ -33,12 +33,15 @@ function handleGridItemClick(item) {
                             tile.classList.remove('confirm-move');
                         });
                         item.classList.add('confirm-move');
+                        clearHighlights('attack-range');
+                        highlightAttackRange(item);
                     }
                 } else {
                     console.log('Clearing move confirmations');
                     document.querySelectorAll('.grid-item.confirm-move').forEach(tile => {
                         tile.classList.remove('confirm-move');
                     });
+                    clearHighlights('attack-range');
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
                 console.log('Adding unit to spawn point');
@@ -146,7 +149,7 @@ function highlightAttackRange(unit) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
                 if (distance <= attackRange) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
-                    if (cell.classList.contains('enemy')) {
+                    if (!cell.classList.contains('unit') && !cell.classList.contains('obstacle') && !cell.classList.contains('spawn-point') && !cell.classList.contains('confirm-move')) {
                         cell.classList.add('attack-range');
                     }
                 }
@@ -155,14 +158,20 @@ function highlightAttackRange(unit) {
     }
 }
 
-function clearHighlights() {
-    document.querySelectorAll('.grid-item.highlight').forEach(item => {
-        item.classList.remove('highlight');
-    });
-    document.querySelectorAll('.grid-item.confirm-move').forEach(item => {
-        item.classList.remove('confirm-move');
-    });
-    document.querySelectorAll('.grid-item.attack-range').forEach(item => {
-        item.classList.remove('attack-range');
-    });
+function clearHighlights(type) {
+    if (!type || type === 'highlight') {
+        document.querySelectorAll('.grid-item.highlight').forEach(item => {
+            item.classList.remove('highlight');
+        });
+    }
+    if (!type || type === 'confirm-move') {
+        document.querySelectorAll('.grid-item.confirm-move').forEach(item => {
+            item.classList.remove('confirm-move');
+        });
+    }
+    if (!type || type === 'attack-range') {
+        document.querySelectorAll('.grid-item.attack-range').forEach(item => {
+            item.classList.remove('attack-range');
+        });
+    }
 }

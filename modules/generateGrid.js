@@ -63,7 +63,6 @@ function addSpawnPoints() {
         const index = row * 10 + col;
         const spawnPoint = document.querySelector(`.grid-container > div:nth-child(${index + 1})`);
         spawnPoint.classList.add('spawn-point');
-        spawnPoint.style.backgroundColor = 'green';
         spawnPoints.push(spawnPoint);
         console.log('Spawn point added at', spawnPoint);
     }
