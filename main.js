@@ -1,6 +1,6 @@
 const GRID_SIZE = 100;
 const moveLimit  = 3;
-const attackRange = 2;
+const attackRange = 4;
 const unitHealth = 50;
 const enemyHealth = 50;
 const attackDamage = 20;

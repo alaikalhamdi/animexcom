@@ -58,13 +58,20 @@ function addObstacles(amount = 10) {
 }
 
 function addSpawnPoints() {
-    const row = Math.floor(Math.random() * 10);
-    for (let col = 0; col < 3; col++) {
-        const index = row * 10 + col;
-        const spawnPoint = document.querySelector(`.grid-container > div:nth-child(${index + 1})`);
-        spawnPoint.classList.add('spawn-point');
-        spawnPoints.push(spawnPoint);
-        console.log('Spawn point added at', spawnPoint);
+    let added = 0;
+    while (added < 3) {
+        const row = Math.floor(Math.random() * 10);
+        for (let col = 0; col < 10; col++) {
+            const index = row * 10 + col;
+            const spawnPoint = document.querySelector(`.grid-container > div:nth-child(${index + 1})`);
+            if (!spawnPoint.classList.contains('unit') && !spawnPoint.classList.contains('enemy') && !spawnPoint.classList.contains('obstacle')) {
+                spawnPoint.classList.add('spawn-point');
+                spawnPoints.push(spawnPoint);
+                console.log('Spawn point added at', spawnPoint);
+                added++;
+                if (added >= 3) break;
+            }
+        }
     }
 }
 
