@@ -45,7 +45,7 @@ function generateGrid(length, width, mapData = null) {
     }
 }
 
-function addObstacles(amount = 10) {
+function addObstacles(amount = 8) {
     const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
@@ -61,6 +61,61 @@ function addObstacles(amount = 10) {
         }
     }
 }
+
+function addVaults(amount = 2) {
+    const emptyCells = Array.from(document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point):not(.vault)'));
+
+    for (let i = 0; i < amount; i++) {
+        if (emptyCells.length === 0) break;
+
+        const randomCell = emptyCells.splice(Math.floor(Math.random() * emptyCells.length), 1)[0];
+        const gridItems = Array.from(randomCell.parentNode.children);
+        const index = gridItems.indexOf(randomCell);
+
+        const isRightEdge = (index + 1) % GRID_WIDTH === 0;
+        const isBottomEdge = index >= GRID_WIDTH * (GRID_LENGTH - 1);
+
+        let adjacentCell = null;
+        let direction = '';
+
+        if (!isRightEdge && emptyCells.includes(gridItems[index + 1])) {
+            adjacentCell = gridItems[index + 1];
+            direction = 'horizontal';
+        } else if (!isBottomEdge && emptyCells.includes(gridItems[index + GRID_WIDTH])) {
+            adjacentCell = gridItems[index + GRID_WIDTH];
+            direction = 'vertical';
+        }
+
+        if (adjacentCell) {
+            randomCell.classList.add('vault-start');
+            adjacentCell.classList.add('vault-end');
+
+            const visualCue = document.createElement('div');
+            const mirrorCue = document.createElement('div');
+            visualCue.classList.add('vault-cue');
+            mirrorCue.classList.add('vault-cue');
+
+            if (direction === 'horizontal') {
+                visualCue.style.cssText = 'width: 10px; height: 100%; right: 0;';
+                mirrorCue.style.cssText = 'width: 10px; height: 100%; left: 0;';
+                randomCell.style.borderRight = '1px solid black';
+                adjacentCell.style.borderLeft = '1px solid black';
+            } else {
+                visualCue.style.cssText = 'width: 100%; height: 8px; bottom: 0;';
+                mirrorCue.style.cssText = 'width: 100%; height: 8px; top: 0;';
+                randomCell.style.borderBottom = '1px solid black';
+                adjacentCell.style.borderTop = '1px solid black';
+            }
+
+            randomCell.appendChild(visualCue);
+            adjacentCell.appendChild(mirrorCue);
+
+            console.log('Vault added at', randomCell, 'and', adjacentCell);
+        }
+    }
+}
+
+
 
 function addSpawnPoints() {
     let added = 0;

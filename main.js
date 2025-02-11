@@ -19,6 +19,7 @@ generateGrid(GRID_LENGTH, GRID_WIDTH);
 addObstacles();
 addSpawnPoints();
 addEnemy(1);
+addVaults();
 
 document.querySelector('.grid-container').addEventListener('click', (event) => {
     if (event.target.classList.contains('grid-item')) {
