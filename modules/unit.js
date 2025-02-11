@@ -30,7 +30,7 @@ function selectUnit(item) {
 function moveUnit(unit, target) {
     const path = findPath(unit, target);
     const unitMP = parseInt(unit.getAttribute('data-mp'));
-    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('highlight')) {
+    if (path.length - 1 <= unitMP && !target.classList.contains('unit') && !target.classList.contains('obstacle') && target.classList.contains('confirm-move')) {
         target.classList.add('unit');
         unit.classList.remove('unit');
         unit.classList.remove('selected');
@@ -81,7 +81,7 @@ function attackEnemy(unit, enemy) {
         updateHealthBar(enemy, enemyHealth);
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
     }
-    clearHighlights();
+    clearHighlights('highlight');clearHighlights('attack-range');
     toggleButtons(false);
 }
 
