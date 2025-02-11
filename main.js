@@ -20,8 +20,10 @@ addObstacles();
 addSpawnPoints();
 addEnemy(1);
 
-document.querySelectorAll('.grid-item').forEach(item => {
-    item.addEventListener('click', () => handleGridItemClick(item));
+document.querySelector('.grid-container').addEventListener('click', (event) => {
+    if (event.target.classList.contains('grid-item')) {
+        handleGridItemClick(event.target);
+    }
 });
 
 ['heal', 'overwatch', 'aoeAttack'].forEach(skill => {

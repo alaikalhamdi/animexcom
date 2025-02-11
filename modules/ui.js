@@ -42,9 +42,10 @@ function handleGridItemClick(item) {
                         highlightAttackRange(item);
                     }
                 } else {
-                    console.log('Clearing move confirmations');
-                    clearHighlights('confirm-move');
-                    clearHighlights('attack-range');
+                    console.log('Cancelling unit selection');
+                    clearHighlights();
+                    cancelUnitSelection();
+                    selectedUnit = null;
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
                 console.log('Adding unit to spawn point');

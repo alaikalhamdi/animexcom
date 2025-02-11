@@ -17,6 +17,12 @@ function generateGrid(length, width, mapData = null) {
             if (cellData.unit) {
                 item.classList.add('unit');
                 item.setAttribute('data-health', cellData.health);
+                item.setAttribute('data-id', cellData.unitId);
+                const unitIdLabel = document.createElement('div');
+                unitIdLabel.classList.add('unit-id');
+                unitIdLabel.textContent = cellData.unitId;
+                item.appendChild(unitIdLabel);
+                item.setAttribute('data-mp', cellData.mp);
                 addHealthBar(item, cellData.health);
                 totalUnits++;
             } else if (cellData.enemy) {
@@ -25,7 +31,11 @@ function generateGrid(length, width, mapData = null) {
                 addHealthBar(item, cellData.health);
             } else if (cellData.obstacle) {
                 item.classList.add('obstacle');
-                item.style.backgroundColor = 'black';
+                if (cellData.coverType === 'full') {
+                    item.classList.add('full-cover');
+                } else if (cellData.coverType === 'partial') {
+                    item.classList.add('partial-cover');
+                }
             } else if (cellData.spawnPoint) {
                 item.classList.add('spawn-point');
                 spawnPoints.push(item);
