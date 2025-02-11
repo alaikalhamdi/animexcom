@@ -81,7 +81,7 @@ function resizeGrid() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit', 'enemy', 'obstacle', 'partial-cover', 'full-cover', 'spawn-point');
+        item.classList.remove('unit', 'enemy', 'obstacle', 'partial-cover', 'full-cover', 'spawn-point', 'selected');
         removeHealthBar(item);
         removeUnitId(item);
     });

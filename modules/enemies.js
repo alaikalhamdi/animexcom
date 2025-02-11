@@ -34,7 +34,7 @@ function moveEnemies() {
             const newCell = document.querySelector(`.grid-container > div:nth-child(${newRow * 10 + newCol + 1})`);
             if (newCell.classList.contains('unit')) {
                 attackUnit(enemy, newCell);
-            } else if (!newCell.classList.contains('enemy') && !newCell.classList.contains('obstacle')) {
+            } else if (!newCell.classList.contains('enemy') && !newCell.classList.contains('obstacle') && !newCell.classList.contains('spawn-point')) {
                 newCell.classList.add('enemy');
                 newCell.setAttribute('data-health', enemy.getAttribute('data-health'));
                 addHealthBar(newCell, enemy.getAttribute('data-health'));

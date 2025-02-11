@@ -24,6 +24,8 @@ function handleGridItemClick(item) {
                     attackEnemy(selectedUnit, item);
                     if (confirmMoveGrid) {
                         moveUnit(selectedUnit, confirmMoveGrid);
+                    } else {
+                        nextTurn();
                     }
                     selectedUnit = null;
                 } else if (item.classList.contains('highlight')) {

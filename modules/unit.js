@@ -81,6 +81,7 @@ function attackEnemy(unit, enemy) {
         updateHealthBar(enemy, enemyHealth);
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
     }
+    unit.classList.remove('selected');
     clearHighlights('highlight');clearHighlights('attack-range');
     toggleButtons(false);
 }
