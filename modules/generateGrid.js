@@ -96,11 +96,13 @@ function addVaults(amount = 2) {
             mirrorCue.classList.add('vault-cue');
 
             if (direction === 'horizontal') {
+                randomCell.classList.add('direction-right');
                 visualCue.style.cssText = 'width: 10px; height: 100%; right: 0;';
                 mirrorCue.style.cssText = 'width: 10px; height: 100%; left: 0;';
                 randomCell.style.borderRight = '1px solid black';
                 adjacentCell.style.borderLeft = '1px solid black';
             } else {
+                randomCell.classList.add('direction-down');
                 visualCue.style.cssText = 'width: 100%; height: 8px; bottom: 0;';
                 mirrorCue.style.cssText = 'width: 100%; height: 8px; top: 0;';
                 randomCell.style.borderBottom = '1px solid black';

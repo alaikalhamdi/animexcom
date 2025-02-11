@@ -24,10 +24,10 @@ function replenishMovementPoints() {
 function calculateCoverBonus(attacker, defender) {
     const attackerIndex = getCellIndex(attacker);
     const defenderIndex = getCellIndex(defender);
-    const attackerRow = Math.floor(attackerIndex / 10);
-    const attackerCol = attackerIndex % 10;
-    const defenderRow = Math.floor(defenderIndex / 10);
-    const defenderCol = defenderIndex % 10;
+    const attackerRow = Math.floor(attackerIndex / GRID_WIDTH);
+    const attackerCol = attackerIndex % GRID_WIDTH;
+    const defenderRow = Math.floor(defenderIndex / GRID_WIDTH);
+    const defenderCol = defenderIndex % GRID_WIDTH;
 
     const isCoverInWay = (coverRow, coverCol) => {
         const rowDiff = defenderRow - attackerRow;
@@ -43,7 +43,7 @@ function calculateCoverBonus(attacker, defender) {
     ];
 
     for (const { row, col } of adjacentCells) {
-        const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
+        const cell = document.querySelector(`.grid-container > div:nth-child(${row * GRID_WIDTH + col + 1})`);
         if (cell && isCoverInWay(row, col)) {
             if (cell.classList.contains('full-cover')) {
                 return 10; // Full cover bonus
