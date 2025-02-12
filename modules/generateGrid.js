@@ -45,7 +45,7 @@ function generateGrid(length, width, mapData = null) {
     }
 }
 
-function addObstacles(amount = 10) {
+function addObstacles(amount = 8) {
     const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
@@ -58,6 +58,42 @@ function addObstacles(amount = 10) {
                 randomCell.classList.add('partial-cover', 'obstacle');
                 console.log('Partial cover added at', randomCell);
             }
+        }
+    }
+}
+
+function addVaults(amount = 2) {
+    const emptyCells = Array.from(document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point):not(.vault)'));
+
+    for (let i = 0; i < amount; i++) {
+        if (emptyCells.length === 0) break;
+
+        const randomCell = emptyCells.splice(Math.floor(Math.random() * emptyCells.length), 1)[0];
+        const gridItems = Array.from(randomCell.parentNode.children);
+        const index = gridItems.indexOf(randomCell);
+
+        const isRightEdge = (index + 1) % GRID_WIDTH === 0;
+        const isBottomEdge = index >= GRID_WIDTH * (GRID_LENGTH - 1);
+
+        let adjacentCell = null;
+        let direction = '';
+
+        if (!isRightEdge && emptyCells.includes(gridItems[index + 1])) {
+            adjacentCell = gridItems[index + 1];
+            direction = 'horizontal';
+        } else if (!isBottomEdge && emptyCells.includes(gridItems[index + GRID_WIDTH])) {
+            adjacentCell = gridItems[index + GRID_WIDTH];
+            direction = 'vertical';
+        }
+
+        if (adjacentCell) {
+            randomCell.classList.add('vault-start');
+            adjacentCell.classList.add('vault-end');
+
+            createVaultVisualCue(randomCell, direction);
+            createVaultVisualCue(adjacentCell, direction, true);
+
+            console.log('Vault added at', randomCell, 'and', adjacentCell);
         }
     }
 }
@@ -91,9 +127,14 @@ function resizeGrid() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit', 'enemy', 'obstacle', 'partial-cover', 'full-cover', 'spawn-point', 'selected');
+        item.classList.remove(
+            'unit', 'enemy', 'selected', 'spawn-point', 
+            'obstacle', 'partial-cover', 'full-cover', 
+            'vault-start', 'vault-end', 'direction-right', 'direction-down'
+        );
         removeHealthBar(item);
         removeUnitId(item);
+        removeVaultVisualCue(item);
     });
     turn = 0;
     totalUnits = 0;
@@ -111,5 +152,6 @@ function resetGrid() {
         addObstacles();
         addSpawnPoints();
         addEnemy(1);
+        addVaults();
     }
 }

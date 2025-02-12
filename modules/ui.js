@@ -3,6 +3,7 @@ let isConfirming = false;
 
 function handleGridItemClick(item) {
     console.log('Grid item clicked:', item);
+    displayGridDetails(item);
     if (mapBuilderMode) {
         console.log('Map builder mode active');
         toggleMapBuilderItem(item);
@@ -178,4 +179,78 @@ function clearHighlights(type) {
             item.classList.remove('attack-range');
         });
     }
+}
+
+function createVaultVisualCue(cell, direction, mirrored = false) {
+    const visualCue = document.createElement('div');
+    visualCue.classList.add('vault-cue');
+    if (direction === 'horizontal') {
+        visualCue.style.cssText = 'width: 10px; height: 100%;';
+        if (mirrored) {
+            visualCue.style.left = '0';
+            visualCue.style.right = 'auto';
+            cell.style.borderLeft = '1px solid black';
+        } else {
+            visualCue.style.right = '0';
+            visualCue.style.left = 'auto';
+            cell.style.borderRight = '1px solid black';
+        }
+    } else {
+        visualCue.style.cssText = 'width: 100%; height: 8px;';
+        if (mirrored) {
+            visualCue.style.top = '0';
+            visualCue.style.bottom = 'auto';
+            cell.style.borderTop = '1px solid black';
+        } else {
+            visualCue.style.bottom = '0';
+            visualCue.style.top = 'auto';
+            cell.style.borderBottom = '1px solid black';
+        }
+    }
+    cell.appendChild(visualCue);
+}
+
+function removeVaultVisualCue(cell) {
+    const visualCue = cell.querySelector('.vault-cue');
+    if (visualCue) {
+        cell.removeChild(visualCue);
+    }
+    cell.style.borderRight = '';
+    cell.style.borderLeft = '';
+    cell.style.borderBottom = '';
+    cell.style.borderTop = '';
+}
+
+function displayGridDetails(item) {
+    const details = document.getElementById('grid-details');
+    const adjacentCells = getAdjacentCells(item);
+    const adjacentCovers = adjacentCells.map(cell => {
+        if (cell.classList.contains('full-cover')) {
+            return 'Full Cover';
+        } else if (cell.classList.contains('partial-cover')) {
+            return 'Partial Cover';
+        } else if (cell.classList.contains('vault-start') || cell.classList.contains('vault-end')) {
+            return 'Vault Cover';
+        } else {
+            return '';
+        }
+    });
+    details.innerHTML = `
+        <p>Class List: ${item.classList}</p>
+        <p>Adjacent Covers: ${adjacentCovers.join(' ')}</p>
+    `;
+}
+
+function getAdjacentCells(item) {
+    const index = getCellIndex(item);
+    const row = Math.floor(index / 10);
+    const col = index % 10;
+    const adjacentCells = [];
+
+    if (row > 0) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${(row - 1) * 10 + col + 1})`));
+    if (row < 9) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${(row + 1) * 10 + col + 1})`));
+    if (col > 0) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${row * 10 + col})`));
+    if (col < 9) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 2})`));
+
+    return adjacentCells;
 }
