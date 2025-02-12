@@ -215,5 +215,7 @@ function removeVaultVisualCue(cell) {
         cell.removeChild(visualCue);
     }
     cell.style.borderRight = '';
+    cell.style.borderLeft = '';
     cell.style.borderBottom = '';
+    cell.style.borderTop = '';
 }
