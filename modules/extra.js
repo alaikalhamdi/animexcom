@@ -32,7 +32,13 @@ function calculateCoverBonus(attacker, defender) {
     const isCoverInWay = (coverRow, coverCol) => {
         const rowDiff = defenderRow - attackerRow;
         const colDiff = defenderCol - attackerCol;
-        return (coverRow - attackerRow) * colDiff === (coverCol - attackerCol) * rowDiff;
+        if ((coverRow - attackerRow) * colDiff === (coverCol - attackerCol) * rowDiff) {
+            return (
+                Math.min(attackerRow, defenderRow) <= coverRow && coverRow <= Math.max(attackerRow, defenderRow) &&
+                Math.min(attackerCol, defenderCol) <= coverCol && coverCol <= Math.max(attackerCol, defenderCol)
+            );
+        }
+        return false;
     };
 
     const adjacentCells = [
