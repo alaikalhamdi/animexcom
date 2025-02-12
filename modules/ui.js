@@ -179,3 +179,41 @@ function clearHighlights(type) {
         });
     }
 }
+
+function createVaultVisualCue(cell, direction, mirrored = false) {
+    const visualCue = document.createElement('div');
+    visualCue.classList.add('vault-cue');
+    if (direction === 'horizontal') {
+        visualCue.style.cssText = 'width: 10px; height: 100%;';
+        if (mirrored) {
+            visualCue.style.left = '0';
+            visualCue.style.right = 'auto';
+            cell.style.borderLeft = '1px solid black';
+        } else {
+            visualCue.style.right = '0';
+            visualCue.style.left = 'auto';
+            cell.style.borderRight = '1px solid black';
+        }
+    } else {
+        visualCue.style.cssText = 'width: 100%; height: 8px;';
+        if (mirrored) {
+            visualCue.style.top = '0';
+            visualCue.style.bottom = 'auto';
+            cell.style.borderTop = '1px solid black';
+        } else {
+            visualCue.style.bottom = '0';
+            visualCue.style.top = 'auto';
+            cell.style.borderBottom = '1px solid black';
+        }
+    }
+    cell.appendChild(visualCue);
+}
+
+function removeVaultVisualCue(cell) {
+    const visualCue = cell.querySelector('.vault-cue');
+    if (visualCue) {
+        cell.removeChild(visualCue);
+    }
+    cell.style.borderRight = '';
+    cell.style.borderBottom = '';
+}
