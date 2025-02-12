@@ -148,7 +148,10 @@ function resizeGrid() {
 
 function resetGrid() {
     document.querySelectorAll('.grid-item').forEach(item => {
-        item.classList.remove('unit', 'enemy', 'obstacle', 'partial-cover', 'full-cover', 'spawn-point', 'selected');
+        item.classList.remove(
+            'unit', 'enemy', 'selected', 'spawn-point', 
+            'obstacle', 'partial-cover', 'full-cover', 
+            'vault-start', 'vault-end', 'direction-right', 'direction-down');
         removeHealthBar(item);
         removeUnitId(item);
     });
