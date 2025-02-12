@@ -68,6 +68,12 @@ function updateSkillCooldowns() {
     for (const skill in skillCooldowns) {
         if (skillCooldowns[skill] > 0) {
             skillCooldowns[skill]--;
+            document.getElementById(`${skill}-cooldown`).textContent = '( ' + skillCooldowns[skill] + ' )';
+            document.getElementById(`${skill}`).disabled = true;
+            if (skillCooldowns[skill] === 0) {
+                document.getElementById(`${skill}-cooldown`).textContent = '';
+                document.getElementById(`${skill}`).disabled = false;
+            }
         }
     }
 }
