@@ -14,7 +14,12 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            position: relative;
+        }
+        .viewport {
+            width: 100vw;
             height: 100vh;
+            overflow: hidden;
             position: relative;
         }
         .grid-container {
@@ -22,6 +27,13 @@
             grid-template-columns: repeat(10, 50px);
             grid-template-rows: repeat(10, 50px);
             gap: 2px;
+
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform-origin: center;
+            transform: translate(-50%, -50%) scale(1);
+            transition: transform 0.1s ease-out;
         }
         .grid-item {
             width: 50px;
@@ -120,6 +132,7 @@
             <label for="grid-width">Grid Width:</label>
             <input type="number" id="grid-width" value="10" min="1">
         </div>
+        <button id="resetZoom">Reset Zoom</button>
         <button id="resetGrid">Reset Grid</button>
         <button onclick="switchToMapBuilder()" id="map-builder-button">Map Builder Mode</button>
         <button id="exportMap">Export Map</button>
@@ -127,7 +140,9 @@
         <button onclick="document.getElementById('importMapInput').click()">Import Map</button>
     </div>
     <div id="grid-details" class="grid-details"></div>
-    <div class="grid-container"></div>
+    <div class="viewport" id="viewport">
+        <div class="grid-container" id="content"></div>
+    </div>
     <div class="bottom-menu">
         <div class="unit-details">
             <div class="turn-display">T<span id="turn-counter">0</span></div>
@@ -147,6 +162,7 @@
     <script src="modules/skill.js"></script>
     <script src="modules/unit.js"></script>
     <script src="modules/ui.js"></script>
+    <script src="modules/camera.js"></script>
     <script src="mapBuilder.js"></script>
     <script src="main.js"></script>
     <script>
