@@ -25,6 +25,17 @@
     <div class="viewport" id="viewport">
         <div class="grid-container" id="content"></div>
     </div>
+    <div id="map-builder-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeModal()">&times;</span>
+            <h2>Select Item Type</h2>
+            <button onclick="selectItemType('unit')">Unit</button>
+            <button onclick="selectItemType('enemy')">Enemy</button>
+            <button onclick="selectItemType('obstacle')">Obstacle</button>
+            <button onclick="selectItemType('spawn-point')">Spawn Point</button>
+            <button onclick="selectItemType('vault')">Vault</button>
+        </div>
+    </div>
     <div class="bottom-menu">
         <div class="unit-details">
             <div class="turn-display">T<span id="turn-counter">0</span></div>

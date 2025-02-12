@@ -39,6 +39,14 @@ function generateGrid(length, width, mapData = null) {
             } else if (cellData.spawnPoint) {
                 item.classList.add('spawn-point');
                 spawnPoints.push(item);
+            } else if (cellData.vaultStart) {
+                item.classList.add('vault-start');
+                item.setAttribute('data-vault-direction', cellData.vaultDirection);
+                createVaultVisualCue(item, cellData.vaultDirection);
+            } else if (cellData.vaultEnd) {
+                item.classList.add('vault-end');
+                item.setAttribute('data-vault-direction', cellData.vaultDirection);
+                createVaultVisualCue(item, cellData.vaultDirection, true);
             }
         });
         updateUnitsLeftDisplay();
@@ -88,13 +96,42 @@ function addVaults(amount = 2) {
 
         if (adjacentCell) {
             randomCell.classList.add('vault-start');
+            randomCell.setAttribute('data-vault-direction', direction);
             adjacentCell.classList.add('vault-end');
+            adjacentCell.setAttribute('data-vault-direction', direction);
 
             createVaultVisualCue(randomCell, direction);
             createVaultVisualCue(adjacentCell, direction, true);
 
             console.log('Vault added at', randomCell, 'and', adjacentCell);
         }
+    }
+}
+
+function addVault(startCell, direction) {
+    const gridItems = Array.from(gridContainer.children);
+    const startIndex = gridItems.indexOf(startCell);
+    let endCell = null;
+
+    if (direction === 'horizontal' && (startIndex + 1) % GRID_WIDTH !== 0) {
+        endCell = gridItems[startIndex + 1];
+    } else if (direction === 'vertical' && startIndex + GRID_WIDTH < gridItems.length) {
+        endCell = gridItems[startIndex + GRID_WIDTH];
+    }
+
+    if (startCell && endCell) {
+        startCell.classList.add('vault-start');
+        startCell.setAttribute('data-vault-direction', direction);
+        endCell.classList.add('vault-end');
+        endCell.setAttribute('data-vault-direction', direction);
+
+        createVaultVisualCue(startCell, direction);
+        createVaultVisualCue(endCell, direction, true);
+
+        console.log('Vault added at', startCell, 'and', endCell);
+    } else {
+        console.error('Invalid vault placement');
+        alert('Invalid vault placement');
     }
 }
 
@@ -131,7 +168,7 @@ function resetGrid() {
         item.classList.remove(
             'unit', 'enemy', 'selected', 'spawn-point', 
             'obstacle', 'partial-cover', 'full-cover', 
-            'vault-start', 'vault-end', 'direction-right', 'direction-down'
+            'vault-start', 'vault-end'
         );
         removeHealthBar(item);
         removeUnitId(item);

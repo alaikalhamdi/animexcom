@@ -1,3 +1,5 @@
+let selectedItem = null;
+
 function switchToMapBuilder() {
     mapBuilderMode = !mapBuilderMode;
     const button = document.getElementById('map-builder-button');
@@ -8,42 +10,46 @@ function switchToMapBuilder() {
 }
 
 function toggleMapBuilderItem(item) {
-    if (item.classList.contains('unit')) {
-        item.classList.remove('unit');
-        removeHealthBar(item);
-    } else if (item.classList.contains('enemy')) {
-        item.classList.remove('enemy');
-        removeHealthBar(item);
-    } else if (item.classList.contains('obstacle')) {
-        item.classList.remove('obstacle');
-    } else if (item.classList.contains('spawn-point')) {
-        item.classList.remove('spawn-point');
-        spawnPoints = spawnPoints.filter(point => point !== item);
-    } else {
-        const type = prompt('Enter type (unit/enemy/obstacle/spawn-point):');
-        if (type === 'unit') {
-            item.classList.add('unit');
-            item.setAttribute('data-health', unitHealth);
-            addHealthBar(item, unitHealth);
-            totalUnits++;
-            updateUnitsLeftDisplay();
-        } else if (type === 'enemy') {
-            item.classList.add('enemy');
-            item.setAttribute('data-health', enemyHealth);
-            addHealthBar(item, enemyHealth);
-        } else if (type === 'obstacle') {
-            const obtype = prompt('Enter cover type (full/partial):');
-            if (obtype === 'full') {
-                item.classList.add('obstacle');
-                item.classList.add('full-cover');
-            } else if (obtype === 'partial') {
-                item.classList.add('partial-cover');
-            }
-        } else if (type === 'spawn-point') {
-            item.classList.add('spawn-point');
-            spawnPoints.push(item);
+    selectedItem = item;
+    openModal();
+}
+
+function selectItemType(type) {
+    if (type === 'unit') {
+        selectedItem.classList.add('unit');
+        selectedItem.setAttribute('data-health', unitHealth);
+        addHealthBar(selectedItem, unitHealth);
+        totalUnits++;
+        updateUnitsLeftDisplay();
+    } else if (type === 'enemy') {
+        selectedItem.classList.add('enemy');
+        selectedItem.setAttribute('data-health', enemyHealth);
+        addHealthBar(selectedItem, enemyHealth);
+    } else if (type === 'obstacle') {
+        const coverType = prompt('Enter cover type (full/partial):');
+        if (coverType === 'full') {
+            selectedItem.classList.add('obstacle', 'full-cover');
+        } else if (coverType === 'partial') {
+            selectedItem.classList.add('obstacle', 'partial-cover');
         }
+    } else if (type === 'spawn-point') {
+        selectedItem.classList.add('spawn-point');
+        spawnPoints.push(selectedItem);
+    } else if (type === 'vault') {
+        const direction = prompt('Enter vault direction (horizontal/vertical):');
+        if (!direction) return;
+        if (!direction.match(/horizontal|vertical/)) console.error('Invalid vault direction:', direction);
+        addVault(selectedItem, direction);
     }
+    closeModal();
+}
+
+function openModal() {
+    document.getElementById('map-builder-modal').style.display = 'block';
+}
+
+function closeModal() {
+    document.getElementById('map-builder-modal').style.display = 'none';
 }
 
 function exportMap() {
@@ -61,7 +67,10 @@ function exportMap() {
             health: item.getAttribute('data-health'),
             unitId: item.getAttribute('data-id'),
             mp: item.getAttribute('data-mp'),
-            coverType: item.classList.contains('full-cover') ? 'full' : item.classList.contains('partial-cover') ? 'partial' : null
+            coverType: item.classList.contains('full-cover') ? 'full' : item.classList.contains('partial-cover') ? 'partial' : null,
+            vaultStart: item.classList.contains('vault-start'),
+            vaultEnd: item.classList.contains('vault-end'),
+            vaultDirection: item.getAttribute('data-vault-direction')
         };
         mapData.cells.push(cellData);
     });
