@@ -55,6 +55,8 @@ function calculateCoverBonus(attacker, defender) {
                 return 10; // Full cover bonus
             } else if (cell.classList.contains('partial-cover')) {
                 return 5; // Partial cover bonus
+            } else if (cell.classList.contains('vault-start') || cell.classList.contains('vault-end')) {
+                return 5; // Vault bonus
             }
         }
     }
