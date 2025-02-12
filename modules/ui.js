@@ -3,6 +3,7 @@ let isConfirming = false;
 
 function handleGridItemClick(item) {
     console.log('Grid item clicked:', item);
+    displayGridDetails(item);
     if (mapBuilderMode) {
         console.log('Map builder mode active');
         toggleMapBuilderItem(item);
@@ -218,4 +219,38 @@ function removeVaultVisualCue(cell) {
     cell.style.borderLeft = '';
     cell.style.borderBottom = '';
     cell.style.borderTop = '';
+}
+
+function displayGridDetails(item) {
+    const details = document.getElementById('grid-details');
+    const adjacentCells = getAdjacentCells(item);
+    const adjacentCovers = adjacentCells.map(cell => {
+        if (cell.classList.contains('full-cover')) {
+            return 'Full Cover';
+        } else if (cell.classList.contains('partial-cover')) {
+            return 'Partial Cover';
+        } else if (cell.classList.contains('vault-start') || cell.classList.contains('vault-end')) {
+            return 'Vault Cover';
+        } else {
+            return '';
+        }
+    });
+    details.innerHTML = `
+        <p>Class List: ${item.classList}</p>
+        <p>Adjacent Covers: ${adjacentCovers.join(' ')}</p>
+    `;
+}
+
+function getAdjacentCells(item) {
+    const index = getCellIndex(item);
+    const row = Math.floor(index / 10);
+    const col = index % 10;
+    const adjacentCells = [];
+
+    if (row > 0) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${(row - 1) * 10 + col + 1})`));
+    if (row < 9) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${(row + 1) * 10 + col + 1})`));
+    if (col > 0) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${row * 10 + col})`));
+    if (col < 9) adjacentCells.push(document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 2})`));
+
+    return adjacentCells;
 }
