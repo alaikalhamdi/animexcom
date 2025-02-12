@@ -126,6 +126,7 @@ function resizeGrid() {
 }
 
 function resetGrid() {
+    resetZoom();
     document.querySelectorAll('.grid-item').forEach(item => {
         item.classList.remove(
             'unit', 'enemy', 'selected', 'spawn-point', 

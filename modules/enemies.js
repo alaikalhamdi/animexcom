@@ -66,7 +66,7 @@ function attackUnit(enemy, unit) {
 
 function addEnemy(amount = 1) {
     for (let i = 0; i < amount; i++) {
-        const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy)');
+        const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add('enemy');

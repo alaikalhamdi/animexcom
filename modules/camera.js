@@ -41,9 +41,13 @@ viewport.addEventListener("mouseleave", () => {
     viewport.style.cursor = "default";
 });
 
-document.getElementById("resetZoom").addEventListener("click", () => {
+function resetZoom() {
     scale = 1;
-    translateX = 0;
-    translateY = 0;
+    translateX = matrix.m41;
+    translateY = matrix.m42;
     content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+}
+
+document.getElementById("resetZoom").addEventListener("click", () => {
+    resetZoom();
 });
