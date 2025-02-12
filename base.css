@@ -1,0 +1,119 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+}
+.viewport {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+}
+.grid-container {
+    display: grid;
+    grid-template-columns: repeat(10, 50px);
+    grid-template-rows: repeat(10, 50px);
+    gap: 2px;
+
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform-origin: center;
+    transform: translate(-50%, -50%) scale(1);
+    transition: transform 0.1s ease-out;
+}
+.grid-item {
+    width: 50px;
+    height: 50px;
+    background-color: lightgray;
+    border: 1px solid #ccc;
+    position: relative;
+}
+.grid-item:hover {
+    opacity: 0.5;
+}
+.highlight {
+    background-color: lightblue;
+}
+.confirm-move {
+    background-color: lightgreen !important;
+}
+.attack-range {
+    border: 1px dotted #ff000089;
+}
+.full-cover {
+    background-color: black;
+}
+.partial-cover {
+    background-color: darkgray;
+}
+.vault-cue {
+    position: absolute;
+    background-color: black;
+}
+.enemy {
+    background-color: red;
+}
+.unit { 
+    background-color: blue;
+}
+.selected{
+    background-color: yellow;
+}
+.health-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 5px;
+    background-color: green;
+}
+.spawn-point {
+    background-color: green !important;
+    border: 1px dotted green;
+}
+.bottom-menu {
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    display: flex;
+    justify-content: space-between;
+}
+.top-menu {
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    padding: 10px;
+}
+.grid-details {
+    position: absolute;
+    top: 0;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    font-size: 10px;
+    margin: 10px;
+    z-index: 1;
+}
+.turn-display {
+    font-weight: bold;
+}
+.unit-id {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 12px;
+    color: white;
+    background-color: rgba(0, 0, 0, 0.5);
+    padding: 2px;
+}
+.skill-button {
+    display: none;
+}
