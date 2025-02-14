@@ -54,6 +54,7 @@ function attackUnit(enemy, unit) {
         unit.classList.remove('unit');
         console.log('Unit defeated by', enemy, 'at', unit);
         removeHealthBar(unit);
+        removeUnitId(unit);
         totalUnits--;
         updateUnitsLeftDisplay();
         checkDefeatCondition();
