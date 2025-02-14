@@ -29,6 +29,7 @@ viewport.addEventListener("mousemove", (event) => {
     translateX = event.clientX - startX;
     translateY = event.clientY - startY;
     content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
+    closeModal();
 });
 
 viewport.addEventListener("mouseup", () => {
