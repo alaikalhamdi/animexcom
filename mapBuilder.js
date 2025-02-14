@@ -11,17 +11,22 @@ function switchToMapBuilder() {
 
 function toggleMapBuilderItem(item) {
     if (item.classList.contains('unit') || item.classList.contains('enemy') || item.classList.contains('obstacle') || item.classList.contains('spawn-point') || item.classList.contains('vault-start') || item.classList.contains('vault-end')) {
+        closeModal();
         removeItem(item);
     } else {
         selectedItem = item;
-        openModal();
+        openModal(item);
     }
 }
 
 function removeItem(item) {
+    if (item.classList.contains('unit')) {
+        unitCounter--;
+        totalUnits--;
+        updateUnitsLeftDisplay();
+        updateUnitsLeftList();
+    }
     item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end');
-    unitCounter--;
-    totalUnits--;
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
     removeHealthBar(item);
@@ -37,7 +42,7 @@ function removeItem(item) {
     item.style.removeProperty('border');
 }
 
-function selectItemType(type) {
+function selectItemType(type, direction, obstacleType) {
     if (type === 'unit') {
         selectedItem.classList.add('unit');
         selectedItem.setAttribute('data-health', unitHealth);
@@ -57,17 +62,16 @@ function selectItemType(type) {
         selectedItem.setAttribute('data-health', enemyHealth);
         addHealthBar(selectedItem, enemyHealth);
     } else if (type === 'obstacle') {
-        const coverType = prompt('Enter cover type (full/partial):');
-        if (coverType === 'full') {
+        if (!obstacleType) return;
+        if (obstacleType === 'full') {
             selectedItem.classList.add('obstacle', 'full-cover');
-        } else if (coverType === 'partial') {
+        } else if (obstacleType === 'partial') {
             selectedItem.classList.add('obstacle', 'partial-cover');
         }
     } else if (type === 'spawn-point') {
         selectedItem.classList.add('spawn-point');
         spawnPoints.push(selectedItem);
     } else if (type === 'vault') {
-        const direction = prompt('Enter vault direction (horizontal/vertical):');
         if (!direction) return;
         if (!direction.match(/horizontal|vertical/)) console.error('Invalid vault direction:', direction);
         addVault(selectedItem, direction);
@@ -75,12 +79,24 @@ function selectItemType(type) {
     closeModal();
 }
 
-function openModal() {
-    document.getElementById('map-builder-modal').style.display = 'block';
+function openModal(item) {
+    const modal = document.getElementById('map-builder-modal');
+    const rect = item.getBoundingClientRect();
+    modal.style.display = 'flex';
+    modal.style.top = `${rect.top + window.scrollY}px`;
+    modal.style.left = `${rect.right + window.scrollX}px`;
 }
 
 function closeModal() {
     document.getElementById('map-builder-modal').style.display = 'none';
+}
+
+function itemTypeSelectorOnChange() {
+    const type = document.getElementById('item-type-selector').value;
+    const direction = document.getElementById('vault-direction-selector');
+    const obstacleType = document.getElementById('obstacle-type-selector');
+    obstacleType.style.display = (type === 'obstacle') ? 'block' : 'none';
+    direction.style.display = (type === 'vault') ? 'block' : 'none';
 }
 
 function exportMap() {

@@ -26,14 +26,25 @@
         <div class="grid-container" id="content"></div>
     </div>
     <div id="map-builder-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" onclick="closeModal()">&times;</span>
-            <h2>Select Item Type</h2>
-            <button onclick="selectItemType('unit')">Unit</button>
-            <button onclick="selectItemType('enemy')">Enemy</button>
-            <button onclick="selectItemType('obstacle')">Obstacle</button>
-            <button onclick="selectItemType('spawn-point')">Spawn Point</button>
-            <button onclick="selectItemType('vault')">Vault</button>
+        <h3 style="margin: 0;">Select Item Type</h3>
+        <select id="item-type-selector" onchange="itemTypeSelectorOnChange()">
+            <option value="unit">Unit</option>
+            <option value="enemy">Enemy</option>
+            <option value="obstacle">Obstacle</option>
+            <option value="spawn-point">Spawn Point</option>
+            <option value="vault">Vault</option>
+        </select>
+        <select id="vault-direction-selector" style="display: none;">
+            <option value="horizontal">Right</option>
+            <option value="vertical">Down</option>
+        </select>
+        <select id="obstacle-type-selector" style="display: none;">
+            <option value="full">Full</option>
+            <option value="partial">Partial</option>
+        </select>
+        <div class="modal-buttons">
+            <button onclick="selectItemType(document.getElementById('item-type-selector').value, direction=document.getElementById('vault-direction-selector').value, obstacleType=document.getElementById('obstacle-type-selector').value)">Confirm</button>
+            <button onclick="closeModal()">Cancel</button>
         </div>
     </div>
     <div class="bottom-menu">
