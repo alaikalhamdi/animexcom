@@ -19,6 +19,7 @@ function useSkill(skillName) {
         skill.effect(selectedUnit);
         skillCooldowns[skillName] = skill.cooldown;
         console.log(`${skillName} used by unit`, selectedUnit);
+        updateSkillCooldownText(skillName);
     } else {
         console.log('No unit selected or invalid skill.');
     }
@@ -68,12 +69,19 @@ function updateSkillCooldowns() {
     for (const skill in skillCooldowns) {
         if (skillCooldowns[skill] > 0) {
             skillCooldowns[skill]--;
-            document.getElementById(`${skill}-cooldown`).textContent = '( ' + skillCooldowns[skill] + ' )';
-            document.getElementById(`${skill}`).disabled = true;
-            if (skillCooldowns[skill] === 0) {
-                document.getElementById(`${skill}-cooldown`).textContent = '';
-                document.getElementById(`${skill}`).disabled = false;
-            }
+            updateSkillCooldownText(skill);
         }
+    }
+}
+
+function updateSkillCooldownText(skill) {
+    const cooldownElement = document.getElementById(`${skill}-cooldown`);
+    const skillButton = document.getElementById(`${skill}`);
+    if (skillCooldowns[skill] > 0) {
+        cooldownElement.textContent = '( ' + skillCooldowns[skill] + ' )';
+        skillButton.disabled = true;
+    } else {
+        cooldownElement.textContent = '';
+        skillButton.disabled = false;
     }
 }
