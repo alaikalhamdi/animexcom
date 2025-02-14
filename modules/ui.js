@@ -21,12 +21,17 @@ function handleGridItemClick(item) {
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                     const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
+                    const unitsLeft = totalUnits - unitsMoved;
                     console.log('Attacking enemy');
                     attackEnemy(selectedUnit, item);
                     if (confirmMoveGrid) {
                         moveUnit(selectedUnit, confirmMoveGrid);
                     } else {
-                        nextTurn();
+                        if (unitsLeft === 0) {
+                            nextTurn();
+                        } else {
+                            skipTurn(selectedUnit);
+                        }
                     }
                     selectedUnit = null;
                 } else if (item.classList.contains('highlight')) {
@@ -144,6 +149,9 @@ function highlightMoves(unit) {
 }
 
 function highlightAttackRange(unit) {
+    if (!canUnitShoot(unit)) {
+        return;
+    }
     const unitIndex = getCellIndex(unit);
     const unitRow = Math.floor(unitIndex / 10);
     const unitCol = unitIndex % 10;

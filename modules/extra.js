@@ -6,6 +6,8 @@ function nextTurn() {
     turn++;
     unitsMoved = 0;
     movedUnits.clear();
+    attackedUnits.clear();
+    skippedUnits.clear();
     replenishMovementPoints();
     updateTurnDisplay();
     updateUnitsLeftDisplay();

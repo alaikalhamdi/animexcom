@@ -55,6 +55,7 @@ function moveUnit(unit, target) {
         console.log('Unit moved from', unit, 'to', target);
         clearHighlights();
         movedUnits.add(target);
+        attackedUnits.delete(unit); // Allow the unit to attack after moving
         unitsMoved++;
         updateUnitsLeftDisplay();
         updateUnitsLeftList();
@@ -83,6 +84,7 @@ function attackEnemy(unit, enemy) {
     }
     unit.classList.remove('selected');
     clearHighlights('highlight');clearHighlights('attack-range');
+    attackedUnits.add(unit);
     toggleButtons(false);
 }
 
@@ -157,7 +159,9 @@ function findPath(start, end) {
 function skipTurn() {
     if (selectedUnit) {
         console.log('Turn skipped for unit:', selectedUnit);
+        selectedUnit.setAttribute('data-mp', 0);
         movedUnits.add(selectedUnit);
+        skippedUnits.add(selectedUnit);
         unitsMoved++;
         updateUnitsLeftDisplay();
         updateUnitsLeftList();
@@ -166,4 +170,8 @@ function skipTurn() {
         }
         cancelUnitSelection();
     }
+}
+
+function canUnitShoot(unit) {
+    return !attackedUnits.has(unit) && !skippedUnits.has(unit) && !movedUnits.has(unit);
 }
