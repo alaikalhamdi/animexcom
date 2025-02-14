@@ -30,14 +30,28 @@ function calculateCoverBonus(attacker, defender) {
     const defenderCol = defenderIndex % GRID_WIDTH;
 
     const isCoverInWay = (coverRow, coverCol) => {
+        // Determine cover direction (horizontal or vertical)
         const rowDiff = defenderRow - attackerRow;
         const colDiff = defenderCol - attackerCol;
-        if ((coverRow - attackerRow) * colDiff === (coverCol - attackerCol) * rowDiff) {
-            return (
-                Math.min(attackerRow, defenderRow) <= coverRow && coverRow <= Math.max(attackerRow, defenderRow) &&
-                Math.min(attackerCol, defenderCol) <= coverCol && coverCol <= Math.max(attackerCol, defenderCol)
-            );
+
+        // Cover must be between attacker and defender
+        const inBetween =
+            Math.min(attackerRow, defenderRow) <= coverRow &&
+            coverRow <= Math.max(attackerRow, defenderRow) &&
+            Math.min(attackerCol, defenderCol) <= coverCol &&
+            coverCol <= Math.max(attackerCol, defenderCol);
+
+        if (!inBetween) return false;
+
+        // **New: Expand the blocked area opposite to attacker**
+        if (coverRow === defenderRow) {
+            // Horizontal cover
+            return (attackerCol < defenderCol && coverCol < defenderCol) || (attackerCol > defenderCol && coverCol > defenderCol);
+        } else if (coverCol === defenderCol) {
+            // Vertical cover
+            return (attackerRow < defenderRow && coverRow < defenderRow) || (attackerRow > defenderRow && coverRow > defenderRow);
         }
+
         return false;
     };
 
