@@ -10,17 +10,41 @@ function switchToMapBuilder() {
 }
 
 function toggleMapBuilderItem(item) {
-    selectedItem = item;
-    openModal();
+    if (item.classList.contains('unit') || item.classList.contains('enemy') || item.classList.contains('obstacle') || item.classList.contains('spawn-point') || item.classList.contains('vault-start') || item.classList.contains('vault-end')) {
+        removeItem(item);
+    } else {
+        selectedItem = item;
+        openModal();
+    }
+}
+
+function removeItem(item) {
+    item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end');
+    item.removeAttribute('data-health');
+    item.removeAttribute('data-id');
+    item.removeAttribute('data-mp');
+    item.removeAttribute('data-vault-direction');
+    while (item.firstChild) {
+        item.removeChild(item.firstChild);
+    }
+    item.style.removeProperty('border');
 }
 
 function selectItemType(type) {
     if (type === 'unit') {
         selectedItem.classList.add('unit');
         selectedItem.setAttribute('data-health', unitHealth);
+        selectedItem.setAttribute('data-mp', unitMovementPoints);
+        selectedItem.setAttribute('data-id', unitCounter);
         addHealthBar(selectedItem, unitHealth);
+        const unitIdLabel = document.createElement('div');
+        unitIdLabel.classList.add('unit-id');
+        unitIdLabel.textContent = unitCounter;
+        selectedItem.appendChild(unitIdLabel);
         totalUnits++;
+        unitCounter++;
         updateUnitsLeftDisplay();
+        updateUnitsLeftList();
     } else if (type === 'enemy') {
         selectedItem.classList.add('enemy');
         selectedItem.setAttribute('data-health', enemyHealth);
