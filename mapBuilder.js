@@ -20,6 +20,13 @@ function toggleMapBuilderItem(item) {
 
 function removeItem(item) {
     item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end');
+    unitCounter--;
+    totalUnits--;
+    updateUnitsLeftDisplay();
+    updateUnitsLeftList();
+    removeHealthBar(item);
+    removeUnitId(item);
+    removeVaultVisualCue(item);
     item.removeAttribute('data-health');
     item.removeAttribute('data-id');
     item.removeAttribute('data-mp');
