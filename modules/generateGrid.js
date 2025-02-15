@@ -172,7 +172,8 @@ function resetGrid() {
         item.classList.remove(
             'unit', 'enemy', 'selected', 'spawn-point', 
             'obstacle', 'partial-cover', 'full-cover', 
-            'vault-start', 'vault-end'
+            'vault-start', 'vault-end', 
+            'empty'
         );
         removeHealthBar(item);
         removeUnitId(item);
