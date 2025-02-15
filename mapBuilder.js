@@ -10,7 +10,7 @@ function switchToMapBuilder() {
 }
 
 function toggleMapBuilderItem(item) {
-    if (item.classList.contains('unit') || item.classList.contains('enemy') || item.classList.contains('obstacle') || item.classList.contains('spawn-point') || item.classList.contains('vault-start') || item.classList.contains('vault-end')) {
+    if (['unit', 'enemy', 'obstacle', 'spawn-point', 'vault-start', 'vault-end', 'empty'].some(cls => item.classList.contains(cls))) {
         closeModal();
         removeItem(item);
     } else {
@@ -26,7 +26,7 @@ function removeItem(item) {
         updateUnitsLeftDisplay();
         updateUnitsLeftList();
     }
-    item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end');
+    item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end', 'empty');
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
     removeHealthBar(item);
@@ -75,6 +75,8 @@ function selectItemType(type, direction, obstacleType) {
         if (!direction) return;
         if (!direction.match(/horizontal|vertical/)) console.error('Invalid vault direction:', direction);
         addVault(selectedItem, direction);
+    } else if (type === 'empty') {
+        selectedItem.classList.add('empty');
     }
     closeModal();
 }

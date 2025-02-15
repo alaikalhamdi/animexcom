@@ -33,6 +33,7 @@
             <option value="obstacle">Obstacle</option>
             <option value="spawn-point">Spawn Point</option>
             <option value="vault">Vault</option>
+            <option value="empty">Empty</option>
         </select>
         <select id="vault-direction-selector" style="display: none;">
             <option value="horizontal">Right</option>
@@ -43,7 +44,11 @@
             <option value="partial">Partial</option>
         </select>
         <div class="modal-buttons">
-            <button onclick="selectItemType(document.getElementById('item-type-selector').value, direction=document.getElementById('vault-direction-selector').value, obstacleType=document.getElementById('obstacle-type-selector').value)">Confirm</button>
+            <button onclick="selectItemType(
+                document.getElementById('item-type-selector').value, 
+                document.getElementById('vault-direction-selector').value, 
+                document.getElementById('obstacle-type-selector').value
+            )">Confirm</button>
             <button onclick="closeModal()">Cancel</button>
         </div>
     </div>

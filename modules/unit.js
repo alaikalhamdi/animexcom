@@ -144,7 +144,7 @@ function findPath(start, end) {
             if (neighborRow >= 0 && neighborRow < 10 && neighborCol >= 0 && neighborCol < 10) {
                 const neighbor = `${neighborRow},${neighborCol}`;
                 const neighborCell = document.querySelector(`.grid-container > div:nth-child(${neighborRow * 10 + neighborCol + 1})`);
-                if (!visited.has(neighbor) && !neighborCell.classList.contains('obstacle')) {
+                if (!visited.has(neighbor) && !neighborCell.classList.contains('obstacle') && !neighborCell.classList.contains('enemy') && !neighborCell.classList.contains('empty')) {
                     queue.push([neighborRow, neighborCol]);
                     visited.add(neighbor);
                     cameFrom[neighbor] = `${currentRow},${currentCol}`;

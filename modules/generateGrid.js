@@ -54,7 +54,9 @@ function generateGrid(length, width, mapData = null) {
 }
 
 function addObstacles(amount = 8) {
-    const emptyCells = document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point)');
+    const emptyCells = document.querySelectorAll(
+        '.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point):not(.vault-start):not(.vault-end):not(.empty)'
+    );
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length > 0) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
@@ -71,7 +73,9 @@ function addObstacles(amount = 8) {
 }
 
 function addVaults(amount = 2) {
-    const emptyCells = Array.from(document.querySelectorAll('.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point):not(.vault)'));
+    const emptyCells = Array.from(document.querySelectorAll(
+        '.grid-item:not(.unit):not(.enemy):not(.obstacle):not(.spawn-point):not(.vault-start):not(.vault-end):not(.empty)'
+    ));
 
     for (let i = 0; i < amount; i++) {
         if (emptyCells.length === 0) break;

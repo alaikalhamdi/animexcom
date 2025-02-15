@@ -58,6 +58,9 @@ body {
     position: absolute;
     background-color: black;
 }
+.empty {
+    background-color: white;
+}
 .enemy {
     background-color: red;
 }

@@ -140,7 +140,7 @@ function highlightMoves(unit) {
             if (row >= 0 && row < 10 && col >= 0 && col < 10) {
                 const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
                 const path = findPath(unit, cell);
-                if (path.length - 1 <= unitMP && !cell.classList.contains('unit') && !cell.classList.contains('enemy') && !cell.classList.contains('obstacle') && !cell.classList.contains('spawn-point')) {
+                if (path.length - 1 <= unitMP && ['unit', 'enemy', 'obstacle', 'empty', 'spawn-point'].every(className => !cell.classList.contains(className))) {
                     cell.classList.add('highlight');
                 }
             }
@@ -162,7 +162,7 @@ function highlightAttackRange(unit) {
                 const distance = Math.abs(row - unitRow) + Math.abs(col - unitCol);
                 if (distance <= attackRange) {
                     const cell = document.querySelector(`.grid-container > div:nth-child(${row * 10 + col + 1})`);
-                    if (!cell.classList.contains('unit') && !cell.classList.contains('obstacle') && !cell.classList.contains('spawn-point') && !cell.classList.contains('confirm-move')) {
+                    if (!cell.classList.contains('unit') && !cell.classList.contains('obstacle') && !cell.classList.contains('spawn-point') && !cell.classList.contains('confirm-move') && !cell.classList.contains('empty')) {
                         cell.classList.add('attack-range');
                     }
                 }
