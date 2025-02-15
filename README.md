@@ -9,17 +9,22 @@ This project is built with **pure HTML, CSS, and JavaScript**. Just open `index.
 - **Map builder** to add and remove enemies, units, and obstacles.
 - **Obstacles** that block movement unless a unit has enough movement points.
 - **Full & partial covers** that function as obstacles.
+- **Vaults** that acts as covers but does not affect movement.
 - **Export & import maps** using JSON.
 
 ### ⚔️ Combat & Movement
 - **Unit spawning** at designated points.
 - **Turn-based movement system** with tile highlighting for traversal. 
 - **Obstacle-aware pathfinding** for refined movement.
+- **Skills** that includes **Healing** and **AOE Attack**. 
 - **Turn-based combat:**
-  - **Click to attack** enemies within a **2-tile range**.
+  - **Click to attack** enemies within a **4-tile range**.
   - **Enemies move** 1 tile closer to the nearest unit per turn.
-  - **Melee attacks** when an enemy is adjacent (1 tile away).
-  - **Covers reduce damage** if they are positioned between the attacker and target.
+  - **Covers reduce damage** from attackers on the other side of the cover.
+
+### 👀 View
+- **Top-down** 2D view with different grid colors.
+- **Scroll to zoom** and **Drag to move** implemented as camera system.
 
 ## Contributing
 For feedback or suggestions, you can:
