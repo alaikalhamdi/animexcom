@@ -68,12 +68,12 @@ function calculateCoverBonus(attacker, defender) {
         const cell = document.querySelector(`.grid-container > div:nth-child(${row * GRID_WIDTH + col + 1})`);
         if (cell && isCoverInWay(row, col)) {
             if (cell.classList.contains('full-cover')) {
-                return 10; // Full cover bonus
+                return 35; // Full cover bonus
             } else if (cell.classList.contains('partial-cover')) {
-                return 5; // Partial cover bonus
+                return 30; // Partial cover bonus
             } else if (cell.classList.contains('vault-start') || cell.classList.contains('vault-end')) {
                 if (defender.classList.contains('vault-start') || defender.classList.contains('vault-end')) {
-                    return 5; // Vault bonus
+                    return 20; // Vault bonus
                 }
             }
         }

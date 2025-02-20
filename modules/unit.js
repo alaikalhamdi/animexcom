@@ -71,7 +71,9 @@ function moveUnit(unit, target) {
 function attackEnemy(unit, enemy) {
     let enemyHealth = parseInt(enemy.getAttribute('data-health'));
     const coverBonus = calculateCoverBonus(unit, enemy);
-    enemyHealth -= (attackDamage - coverBonus);
+    const damageDealt = attackDamage - (Math.round((attackDamage * coverBonus) / 100));
+    enemyHealth -= damageDealt;
+    console.log('Damage dealt by', unit, 'to', enemy, ':', damageDealt);
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         console.log('Enemy defeated by', unit, 'at', enemy);
@@ -83,7 +85,8 @@ function attackEnemy(unit, enemy) {
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
     }
     unit.classList.remove('selected');
-    clearHighlights('highlight');clearHighlights('attack-range');
+    clearHighlights('highlight');
+    clearHighlights('attack-range');
     attackedUnits.add(unit);
     toggleButtons(false);
 }
