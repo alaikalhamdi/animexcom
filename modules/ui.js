@@ -51,6 +51,7 @@ function handleGridItemClick(item) {
                     if (item.classList.contains('confirm-move')) {
                         console.log('Moving unit to confirmed position');
                         moveUnit(selectedUnit, item);
+                        clearAttackLine();
                         item.classList.remove('confirm-move');
                         selectedUnit = null;
                     } else {
@@ -65,6 +66,7 @@ function handleGridItemClick(item) {
                     clearHighlights();
                     cancelUnitSelection();
                     selectedUnit = null;
+                    clearAttackLine();
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
                 console.log('Adding unit to spawn point');
