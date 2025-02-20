@@ -54,6 +54,7 @@ function aoeAttack(unit) {
                         cell.classList.remove('enemy');
                         removeHealthBar(cell);
                         console.log('Enemy defeated by AOE attack at', cell);
+                        checkVictoryCondition();
                     } else {
                         cell.setAttribute('data-health', enemyHealth);
                         updateHealthBar(cell, enemyHealth);
