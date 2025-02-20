@@ -175,3 +175,43 @@ function skipTurn() {
 function canUnitShoot(unit) {
     return !attackedUnits.has(unit) && !skippedUnits.has(unit) && !movedUnits.has(unit);
 }
+
+function drawAttackLine(attacker, defender) {
+    const line = document.createElement('div');
+    line.classList.add('attack-line');
+    document.body.appendChild(line);
+
+    const attackerRect = attacker.getBoundingClientRect();
+    const defenderRect = defender.getBoundingClientRect();
+
+    const x1 = attackerRect.left + attackerRect.width / 2;
+    const y1 = attackerRect.top + attackerRect.height / 2;
+    const x2 = defenderRect.left + defenderRect.width / 2;
+    const y2 = defenderRect.top + defenderRect.height / 2;
+
+    const length = Math.hypot(x2 - x1, y2 - y1);
+    const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
+
+    line.style.position = 'absolute';
+    line.style.width = `${length}px`;
+    line.style.height = '2px';
+    line.style.background = 'orange';
+    line.style.transformOrigin = '0 50%';
+    line.style.transform = `rotate(${angle}deg)`;
+    line.style.left = `${x1}px`;
+    line.style.top = `${y1}px`;
+    const coverBonus = calculateCoverBonus(attacker, defender);
+    if (coverBonus > 0) {
+        line.style.background = 'grey';
+    }
+
+    console.log('Attack line drawn from', attacker, 'to', defender);
+}
+
+
+function clearAttackLine() {
+    const line = document.querySelector('.attack-line');
+    if (line) {
+        line.remove();
+    }
+}

@@ -22,6 +22,7 @@ function handleGridItemClick(item) {
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                     if (item.classList.contains('confirm-attack')) {
                         console.log('Attacking enemy');
+                        clearAttackLine();
                         attackEnemy(selectedUnit, item);
                         const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
                         const unitsLeft = totalUnits - unitsMoved;
@@ -44,6 +45,7 @@ function handleGridItemClick(item) {
                         indicator.textContent = String.fromCodePoint(0x27D0);
                         indicator.classList.add('attack-indicator');
                         item.appendChild(indicator);
+                        drawAttackLine(selectedUnit, item);
                     }
                 } else if (item.classList.contains('highlight')) {
                     if (item.classList.contains('confirm-move')) {
