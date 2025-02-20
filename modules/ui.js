@@ -20,20 +20,31 @@ function handleGridItemClick(item) {
                     cancelUnitSelection();
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
-                    const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
-                    const unitsLeft = totalUnits - unitsMoved;
-                    console.log('Attacking enemy');
-                    attackEnemy(selectedUnit, item);
-                    if (confirmMoveGrid) {
-                        moveUnit(selectedUnit, confirmMoveGrid);
-                    } else {
-                        if (unitsLeft === 0) {
-                            nextTurn();
+                    if (item.classList.contains('confirm-attack')) {
+                        console.log('Attacking enemy');
+                        attackEnemy(selectedUnit, item);
+                        const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
+                        const unitsLeft = totalUnits - unitsMoved;
+                        if (confirmMoveGrid) {
+                            moveUnit(selectedUnit, confirmMoveGrid);
                         } else {
-                            skipTurn(selectedUnit);
+                            if (unitsLeft === 0) {
+                                nextTurn();
+                            } else {
+                                skipTurn(selectedUnit);
+                            }
                         }
+                        item.classList.remove('confirm-attack');
+                        selectedUnit = null;
+                    } else {
+                        console.log('Highlighting attack confirmation');
+                        clearHighlights('confirm-attack');
+                        item.classList.add('confirm-attack');
+                        const indicator = document.createElement('span');
+                        indicator.textContent = String.fromCodePoint(0x27D0);
+                        indicator.classList.add('attack-indicator');
+                        item.appendChild(indicator);
                     }
-                    selectedUnit = null;
                 } else if (item.classList.contains('highlight')) {
                     if (item.classList.contains('confirm-move')) {
                         console.log('Moving unit to confirmed position');
@@ -185,6 +196,14 @@ function clearHighlights(type) {
     if (!type || type === 'attack-range') {
         document.querySelectorAll('.grid-item.attack-range').forEach(item => {
             item.classList.remove('attack-range');
+        });
+    }
+    if (!type || type === 'confirm-attack') {
+        document.querySelectorAll('.grid-item.confirm-attack').forEach(item => {
+            item.classList.remove('confirm-attack');
+        });
+        document.querySelectorAll('.attack-indicator').forEach(indicator => {
+            indicator.remove();
         });
     }
 }

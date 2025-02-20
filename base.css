@@ -8,6 +8,12 @@ body {
     align-items: center;
     justify-content: center;
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 .viewport {
     width: 100vw;
@@ -132,4 +138,7 @@ body {
     height: 100px;
     flex-direction: column;
     justify-content: space-between;
+}
+.attack-indicator {
+    opacity: 1;
 }
