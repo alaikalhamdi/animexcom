@@ -30,6 +30,9 @@ viewport.addEventListener("mousemove", (event) => {
     translateY = event.clientY - startY;
     content.style.transform = `translate(${translateX}px, ${translateY}px) scale(${scale})`;
     closeModal();
+    if (selectedUnit && selectedEnemy) {
+        drawAttackLine(selectedUnit, selectedEnemy);
+    }
 });
 
 viewport.addEventListener("mouseup", () => {

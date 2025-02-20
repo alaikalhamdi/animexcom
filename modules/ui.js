@@ -37,8 +37,10 @@ function handleGridItemClick(item) {
                         }
                         item.classList.remove('confirm-attack');
                         selectedUnit = null;
+                        selectedEnemy = null;
                     } else {
                         console.log('Highlighting attack confirmation');
+                        selectedEnemy = item;
                         clearHighlights('confirm-attack');
                         item.classList.add('confirm-attack');
                         const indicator = document.createElement('span');
@@ -54,10 +56,13 @@ function handleGridItemClick(item) {
                         clearAttackLine();
                         item.classList.remove('confirm-move');
                         selectedUnit = null;
+                        selectedEnemy = null;
                     } else {
                         console.log('Highlighting move confirmation');
                         clearHighlights('confirm-move');
                         item.classList.add('confirm-move');
+                        clearHighlights('confirm-attack');
+                        clearAttackLine();
                         clearHighlights('attack-range');
                         highlightAttackRange(item);
                     }
@@ -66,6 +71,7 @@ function handleGridItemClick(item) {
                     clearHighlights();
                     cancelUnitSelection();
                     selectedUnit = null;
+                    selectedEnemy = null;
                     clearAttackLine();
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
@@ -288,6 +294,7 @@ function getAdjacentCells(item) {
 
 
 function drawAttackLine(attacker, defender) {
+    clearAttackLine();
     const line = document.createElement('div');
     line.classList.add('attack-line');
     document.body.appendChild(line);
@@ -315,8 +322,6 @@ function drawAttackLine(attacker, defender) {
     if (coverBonus > 0) {
         line.style.background = 'grey';
     }
-
-    console.log('Attack line drawn from', attacker, 'to', defender);
 }
 
 

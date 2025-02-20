@@ -10,7 +10,9 @@ function cancelUnitSelection() {
     if (selectedUnit) {
         selectedUnit.classList.remove('selected');
         clearHighlights();
+        clearAttackLine();
         selectedUnit = null;
+        selectedEnemy = null;
         console.log('Unit selection canceled');
         toggleButtons(false);
     }

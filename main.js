@@ -11,6 +11,7 @@ let mapBuilderMode = false;
 let unitsMoved = 0;
 let totalUnits = 0;
 let selectedUnit = null;
+let selectedEnemy = null;
 let turn = 0;
 let movedUnits = new Set();
 let attackedUnits = new Set();
