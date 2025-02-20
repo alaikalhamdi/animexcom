@@ -142,9 +142,3 @@ body {
 .attack-indicator {
     opacity: 1;
 }
-.attack-line {
-    position: absolute;
-    height: 2px;
-    background-color: red;
-    z-index: 1000;
-}
