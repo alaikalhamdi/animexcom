@@ -179,6 +179,7 @@ function resetGrid() {
         removeUnitId(item);
         removeVaultVisualCue(item);
     });
+    resetSkillCooldowns();
     turn = 0;
     totalUnits = 0;
     unitsMoved = 0;
@@ -186,6 +187,9 @@ function resetGrid() {
     selectedUnit = null;
     movedUnits.clear();
     spawnPoints = [];
+    cancelUnitSelection();
+    toggleButtons(false);
+    clearAttackLine();
     updateTurnDisplay();
     updateUnitsLeftDisplay();
     updateUnitsLeftList();

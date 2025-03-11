@@ -86,3 +86,10 @@ function updateSkillCooldownText(skill) {
         skillButton.disabled = false;
     }
 }
+
+function resetSkillCooldowns() {
+    for (const skill in skillCooldowns) {
+        skillCooldowns[skill] = 0;
+        updateSkillCooldownText(skill);
+    }
+}
