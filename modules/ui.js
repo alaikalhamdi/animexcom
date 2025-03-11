@@ -47,7 +47,12 @@ function handleGridItemClick(item) {
                         indicator.textContent = String.fromCodePoint(0x27D0);
                         indicator.classList.add('attack-indicator');
                         item.appendChild(indicator);
-                        drawAttackLine(selectedUnit, item);
+                        confirmMove = document.querySelector('.grid-item.confirm-move');
+                        if (confirmMove) {
+                            drawAttackLine(confirmMove, item);
+                        } else {
+                            drawAttackLine(selectedUnit, item);
+                        }
                     }
                 } else if (item.classList.contains('highlight')) {
                     if (item.classList.contains('confirm-move')) {
