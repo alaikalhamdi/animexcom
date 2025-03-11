@@ -13,6 +13,7 @@ function nextTurn() {
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
     console.log('Turn', turn);
+    logAction(`Turn ${turn}`, true);
     moveEnemies();
     updateSkillCooldowns();
 }

@@ -55,6 +55,7 @@ function moveUnit(unit, target) {
         }
 
         console.log('Unit moved from', unit, 'to', target);
+        logAction(`Unit ${target.getAttribute('data-id')} moved from ${getCellIndex(unit)} to ${getCellIndex(target)}`);
         clearHighlights();
         movedUnits.add(target);
         attackedUnits.delete(unit); // Allow the unit to attack after moving
@@ -79,12 +80,15 @@ function attackEnemy(unit, enemy) {
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         console.log('Enemy defeated by', unit, 'at', enemy);
+        logAction(`Enemy defeated by unit ${unit.getAttribute('data-id')}`);
         removeHealthBar(enemy);
         checkVictoryCondition();
     } else {
         enemy.setAttribute('data-health', enemyHealth);
         updateHealthBar(enemy, enemyHealth);
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
+        logAction(`Enemy attacked by unit ${unit.getAttribute('data-id')}`);
+        logAction(`Remaining health: ${enemyHealth}`, false, true);
     }
     unit.classList.remove('selected');
     clearHighlights('highlight');

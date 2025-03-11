@@ -41,6 +41,7 @@ function moveEnemies() {
                 enemy.classList.remove('enemy');
                 removeHealthBar(enemy);
                 console.log('Enemy moved from', enemy, 'to', newCell);
+                logAction(`Enemy moved from ${enemyIndex} to ${getCellIndex(newCell)}`);
             }
         }
     });
@@ -62,6 +63,8 @@ function attackUnit(enemy, unit) {
         unit.setAttribute('data-health', unitHealth);
         updateHealthBar(unit, unitHealth);
         console.log('Unit attacked by', enemy, 'at', unit, 'remaining health:', unitHealth);
+        logAction(`Unit attacked by enemy at ${getCellIndex(unit)}`);
+        logAction(`Remaining health: ${unitHealth}`, false, true);
     }
 }
 

@@ -2,26 +2,22 @@ let lastClickedTile = null;
 let isConfirming = false;
 
 function handleGridItemClick(item) {
-    console.log('Grid item clicked:', item);
     displayGridDetails(item);
     if (mapBuilderMode) {
         console.log('Map builder mode active');
+        logAction('Map builder mode active');
         toggleMapBuilderItem(item);
     } else {
         try {
             if (selectedUnit) {
-                console.log('Selected unit:', selectedUnit);
                 if (selectedUnit === item) {
-                    console.log('Cancelling unit selection');
                     cancelUnitSelection();
                     selectedUnit = null;
                 } else if (item.classList.contains('unit')) {
-                    console.log('Selecting new unit');
                     cancelUnitSelection();
                     selectUnit(item);
                 } else if (item.classList.contains('enemy') && item.classList.contains('attack-range')) {
                     if (item.classList.contains('confirm-attack')) {
-                        console.log('Attacking enemy');
                         clearAttackLine();
                         attackEnemy(selectedUnit, item);
                         const confirmMoveGrid = document.querySelector('.grid-item.confirm-move');
@@ -39,7 +35,6 @@ function handleGridItemClick(item) {
                         selectedUnit = null;
                         selectedEnemy = null;
                     } else {
-                        console.log('Highlighting attack confirmation');
                         selectedEnemy = item;
                         clearHighlights('confirm-attack');
                         item.classList.add('confirm-attack');
@@ -56,14 +51,12 @@ function handleGridItemClick(item) {
                     }
                 } else if (item.classList.contains('highlight')) {
                     if (item.classList.contains('confirm-move')) {
-                        console.log('Moving unit to confirmed position');
                         moveUnit(selectedUnit, item);
                         clearAttackLine();
                         item.classList.remove('confirm-move');
                         selectedUnit = null;
                         selectedEnemy = null;
                     } else {
-                        console.log('Highlighting move confirmation');
                         clearHighlights('confirm-move');
                         item.classList.add('confirm-move');
                         clearHighlights('confirm-attack');
@@ -72,7 +65,6 @@ function handleGridItemClick(item) {
                         highlightAttackRange(item);
                     }
                 } else {
-                    console.log('Cancelling unit selection');
                     clearHighlights();
                     cancelUnitSelection();
                     selectedUnit = null;
@@ -81,13 +73,14 @@ function handleGridItemClick(item) {
                 }
             } else if (item.classList.contains('spawn-point') && !item.classList.contains('unit')) {
                 console.log('Adding unit to spawn point');
+                logAction('Adding unit to spawn point');
                 addUnitToSpawnPoint(item);
             } else {
-                console.log('Selecting unit');
                 selectUnit(item);
             }
         } catch (error) {
             console.error('Error handling grid item click:', error);
+            logAction(`Error: ${error.message}`);
         }
     }
 }
@@ -329,10 +322,28 @@ function drawAttackLine(attacker, defender) {
     }
 }
 
-
 function clearAttackLine() {
     const line = document.querySelector('.attack-line');
     if (line) {
         line.remove();
     }
+}
+
+function logAction(message, nextTurn = false, subtext = false) {
+    const logPanel = document.getElementById('log-panel');
+    const logEntry = document.createElement('div');
+    if (nextTurn) {
+        logEntry.classList.add('log-next-turn');
+    } else if (subtext) {
+        logEntry.classList.add('log-subtext');
+    }
+    logEntry.classList.add('log-entry');
+    logEntry.textContent = message;
+    logPanel.appendChild(logEntry);
+    logPanel.scrollTop = logPanel.scrollHeight;
+}
+
+function clearLogs() {
+    const logPanel = document.getElementById('log-panel');
+    logPanel.innerHTML = '';
 }
