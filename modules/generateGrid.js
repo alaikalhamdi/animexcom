@@ -18,6 +18,7 @@ function generateGrid(length, width, mapData = null) {
                 item.classList.add('unit');
                 item.setAttribute('data-health', cellData.health);
                 item.setAttribute('data-id', cellData.unitId);
+                item.setAttribute('data-ci', cellData.confectanceIndex);
                 const unitIdLabel = document.createElement('div');
                 unitIdLabel.classList.add('unit-id');
                 unitIdLabel.textContent = cellData.unitId;

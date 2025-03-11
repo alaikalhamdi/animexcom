@@ -37,6 +37,7 @@ function moveUnit(unit, target) {
         unit.classList.remove('unit');
         unit.classList.remove('selected');
         target.setAttribute('data-id', unit.getAttribute('data-id'));
+        target.setAttribute('data-ci', unit.getAttribute('data-ci'));
         target.setAttribute('data-health', unit.getAttribute('data-health'));
         target.setAttribute('data-mp', unitMP - (path.length - 1));
 
@@ -100,6 +101,7 @@ function attackEnemy(unit, enemy) {
 function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.classList.add('unit');
     spawnPoint.setAttribute('data-health', unitHealth);
+    spawnPoint.setAttribute('data-ci', confectanceIndex);
     spawnPoint.setAttribute('data-mp', unitMovementPoints);
     spawnPoint.setAttribute('data-id', unitCounter);
     const unitIdLabel = document.createElement('div');

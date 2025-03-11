@@ -34,6 +34,7 @@ function removeItem(item) {
     removeVaultVisualCue(item);
     item.removeAttribute('data-health');
     item.removeAttribute('data-id');
+    item.removeAttribute('data-ci');
     item.removeAttribute('data-mp');
     item.removeAttribute('data-vault-direction');
     while (item.firstChild) {
@@ -48,6 +49,7 @@ function selectItemType(type, direction, obstacleType) {
         selectedItem.setAttribute('data-health', unitHealth);
         selectedItem.setAttribute('data-mp', unitMovementPoints);
         selectedItem.setAttribute('data-id', unitCounter);
+        selectedItem.setAttribute('data-ci', confectanceIndex);
         addHealthBar(selectedItem, unitHealth);
         const unitIdLabel = document.createElement('div');
         unitIdLabel.classList.add('unit-id');
@@ -116,6 +118,7 @@ function exportMap() {
             health: item.getAttribute('data-health'),
             unitId: item.getAttribute('data-id'),
             mp: item.getAttribute('data-mp'),
+            confectanceIndex: item.getAttribute('data-ci'),
             coverType: item.classList.contains('full-cover') ? 'full' : item.classList.contains('partial-cover') ? 'partial' : null,
             vaultStart: item.classList.contains('vault-start'),
             vaultEnd: item.classList.contains('vault-end'),
