@@ -52,7 +52,7 @@ function aoeAttack(unit) {
                     enemyHealth -= 15; // AOE attack deals 15 damage
                     if (enemyHealth <= 0) {
                         cell.classList.remove('enemy');
-                        removeHealthBar(cell);
+                        removeStatusBar(cell);
                         console.log('Enemy defeated by AOE attack at', cell);
                         checkVictoryCondition();
                     } else {

@@ -37,9 +37,10 @@ function moveEnemies() {
             } else if (!newCell.classList.contains('enemy') && !newCell.classList.contains('obstacle') && !newCell.classList.contains('spawn-point')) {
                 newCell.classList.add('enemy');
                 newCell.setAttribute('data-health', enemy.getAttribute('data-health'));
-                addHealthBar(newCell, enemy.getAttribute('data-health'));
+                newCell.setAttribute('data-sg', enemy.getAttribute('data-sg'));
+                addStatusBar(newCell, enemy.getAttribute('data-health'), enemy.getAttribute('data-sg'));
                 enemy.classList.remove('enemy');
-                removeHealthBar(enemy);
+                removeStatusBar(enemy);
                 console.log('Enemy moved from', enemy, 'to', newCell);
                 logAction(`Enemy moved from ${enemyIndex} to ${getCellIndex(newCell)}`);
             }
@@ -49,19 +50,22 @@ function moveEnemies() {
 
 function attackUnit(enemy, unit) {
     let unitHealth = parseInt(unit.getAttribute('data-health'));
+    let unitStab = parseInt(unit.getAttribute('data-sg'));
     const coverBonus = calculateCoverBonus(enemy, unit);
-    unitHealth -= (attackDamage - coverBonus);
+    const damageDealt = attackDamage - (Math.round((attackDamage * coverBonus) / 100));
+    unitHealth -= damageDealt;
+    unitStab -= stabShred;
     if (unitHealth <= 0) {
         unit.classList.remove('unit');
         console.log('Unit defeated by', enemy, 'at', unit);
-        removeHealthBar(unit);
+        removeStatusBar(unit);
         removeUnitId(unit);
         totalUnits--;
         updateUnitsLeftDisplay();
         checkDefeatCondition();
     } else {
-        unit.setAttribute('data-health', unitHealth);
         updateHealthBar(unit, unitHealth);
+        updateStabilityGauge(unit, unitStab);
         console.log('Unit attacked by', enemy, 'at', unit, 'remaining health:', unitHealth);
         logAction(`Unit attacked by enemy at ${getCellIndex(unit)}`);
         logAction(`Remaining health: ${unitHealth}`, false, true);
@@ -75,7 +79,8 @@ function addEnemy(amount = 1) {
             const randomCell = emptyCells[Math.floor(Math.random() * emptyCells.length)];
             randomCell.classList.add('enemy');
             randomCell.setAttribute('data-health', enemyHealth);
-            addHealthBar(randomCell, enemyHealth);
+            randomCell.setAttribute('data-sg', maxStabilityGauge);
+            addStatusBar(randomCell, enemyHealth, maxStabilityGauge);
             console.log('Enemy added at', randomCell);
         }
     }

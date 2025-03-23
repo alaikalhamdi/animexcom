@@ -38,15 +38,16 @@ function moveUnit(unit, target) {
         unit.classList.remove('selected');
         target.setAttribute('data-id', unit.getAttribute('data-id'));
         target.setAttribute('data-ci', unit.getAttribute('data-ci'));
+        target.setAttribute('data-sg', unit.getAttribute('data-sg'));
         target.setAttribute('data-health', unit.getAttribute('data-health'));
         target.setAttribute('data-mp', unitMP - (path.length - 1));
 
-        const healthBar = unit.querySelector('.health-bar');
-        if (healthBar) {
-            unit.removeChild(healthBar);
-            target.appendChild(healthBar);
+        const statusBar = unit.querySelector('.status-bar');
+        if (statusBar) {
+            removeStatusBar(unit);
+            target.appendChild(statusBar);
         } else {
-            addHealthBar(target, unit.getAttribute('data-health'));
+            addStatusBar(target, unit.getAttribute('data-health'), unit.getAttribute('data-sg'));
         }
 
         const unitIdLabel = unit.querySelector('.unit-id');
@@ -74,19 +75,21 @@ function moveUnit(unit, target) {
 
 function attackEnemy(unit, enemy) {
     let enemyHealth = parseInt(enemy.getAttribute('data-health'));
+    let enemyStab = parseInt(enemy.getAttribute('data-sg'))
     const coverBonus = calculateCoverBonus(unit, enemy);
     const damageDealt = attackDamage - (Math.round((attackDamage * coverBonus) / 100));
     enemyHealth -= damageDealt;
+    enemyStab -= stabShred;
     console.log('Damage dealt by', unit, 'to', enemy, ':', damageDealt);
     if (enemyHealth <= 0) {
         enemy.classList.remove('enemy');
         console.log('Enemy defeated by', unit, 'at', enemy);
         logAction(`Enemy defeated by unit ${unit.getAttribute('data-id')}`);
-        removeHealthBar(enemy);
+        removeStatusBar(enemy);
         checkVictoryCondition();
     } else {
-        enemy.setAttribute('data-health', enemyHealth);
         updateHealthBar(enemy, enemyHealth);
+        updateStabilityGauge(enemy, enemyStab);
         console.log('Enemy attacked by', unit, 'at', enemy, 'remaining health:', enemyHealth);
         logAction(`Enemy attacked by unit ${unit.getAttribute('data-id')}`);
         logAction(`Remaining health: ${enemyHealth}`, false, true);
@@ -102,13 +105,14 @@ function addUnitToSpawnPoint(spawnPoint) {
     spawnPoint.classList.add('unit');
     spawnPoint.setAttribute('data-health', unitHealth);
     spawnPoint.setAttribute('data-ci', confectanceIndex);
+    spawnPoint.setAttribute('data-sg', maxStabilityGauge);
     spawnPoint.setAttribute('data-mp', unitMovementPoints);
     spawnPoint.setAttribute('data-id', unitCounter);
     const unitIdLabel = document.createElement('div');
     unitIdLabel.classList.add('unit-id');
     unitIdLabel.textContent = unitCounter;
     spawnPoint.appendChild(unitIdLabel);
-    addHealthBar(spawnPoint, unitHealth);
+    addStatusBar(spawnPoint, unitHealth, maxStabilityGauge);
     console.log('Unit added at', spawnPoint);
     totalUnits++;
     unitCounter++;

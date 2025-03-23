@@ -29,12 +29,13 @@ function removeItem(item) {
     item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end', 'empty');
     updateUnitsLeftDisplay();
     updateUnitsLeftList();
-    removeHealthBar(item);
+    removeStatusBar(item);
     removeUnitId(item);
     removeVaultVisualCue(item);
     item.removeAttribute('data-health');
     item.removeAttribute('data-id');
     item.removeAttribute('data-ci');
+    item.removeAttribute('data-sg');
     item.removeAttribute('data-mp');
     item.removeAttribute('data-vault-direction');
     while (item.firstChild) {
@@ -50,7 +51,8 @@ function selectItemType(type, direction, obstacleType) {
         selectedItem.setAttribute('data-mp', unitMovementPoints);
         selectedItem.setAttribute('data-id', unitCounter);
         selectedItem.setAttribute('data-ci', confectanceIndex);
-        addHealthBar(selectedItem, unitHealth);
+        selectedItem.setAttribute('data-sg', maxStabilityGauge);
+        addStatusBar(selectedItem, unitHealth, maxStabilityGauge);
         const unitIdLabel = document.createElement('div');
         unitIdLabel.classList.add('unit-id');
         unitIdLabel.textContent = unitCounter;
@@ -62,7 +64,7 @@ function selectItemType(type, direction, obstacleType) {
     } else if (type === 'enemy') {
         selectedItem.classList.add('enemy');
         selectedItem.setAttribute('data-health', enemyHealth);
-        addHealthBar(selectedItem, enemyHealth);
+        addStatusBar(selectedItem, enemyHealth, maxStabilityGauge);
     } else if (type === 'obstacle') {
         if (!obstacleType) return;
         if (obstacleType === 'full') {
@@ -119,6 +121,7 @@ function exportMap() {
             unitId: item.getAttribute('data-id'),
             mp: item.getAttribute('data-mp'),
             confectanceIndex: item.getAttribute('data-ci'),
+            stabilityGauge: item.getAttribute('data-sg'),
             coverType: item.classList.contains('full-cover') ? 'full' : item.classList.contains('partial-cover') ? 'partial' : null,
             vaultStart: item.classList.contains('vault-start'),
             vaultEnd: item.classList.contains('vault-end'),

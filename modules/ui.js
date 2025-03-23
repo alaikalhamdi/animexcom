@@ -85,24 +85,49 @@ function handleGridItemClick(item) {
     }
 }
 
-function addHealthBar(cell, health) {
+function addStatusBar(cell, health, stabilityGauge) {
+    const statusBar = document.createElement('div');
+    statusBar.classList.add('status-bar');
+
+    const stabGauge = document.createElement('div');
+    stabGauge.classList.add('stability-gauge');
+    stabGauge.style.backgroundColor = intToColor(stabilityGauge, maxStabilityGauge);
+
     const healthBar = document.createElement('div');
     healthBar.classList.add('health-bar');
     healthBar.style.width = `${health}%`;
-    cell.appendChild(healthBar);
+
+    cell.appendChild(statusBar);
+    statusBar.appendChild(stabGauge);
+    statusBar.appendChild(healthBar);
 }
 
 function updateHealthBar(cell, health) {
+    cell.setAttribute('data-health', health)
     const healthBar = cell.querySelector('.health-bar');
     if (healthBar) {
         healthBar.style.width = `${health}%`;
     }
 }
 
-function removeHealthBar(cell) {
-    const healthBar = cell.querySelector('.health-bar');
-    if (healthBar) {
-        cell.removeChild(healthBar);
+function updateStabilityGauge(cell, stabilityGauge) {
+    cell.setAttribute('data-sg', stabilityGauge);
+    const stabGauge = cell.querySelector('.stability-gauge');
+    if (stabGauge) {
+        stabGauge.style.backgroundColor = intToColor(stabilityGauge, maxStabilityGauge);
+    }
+}
+
+function removeStatusBar(cell) {
+    // remove cell attributes
+    cell.removeAttribute('data-health');
+    cell.removeAttribute('data-sg');
+    cell.removeAttribute('data-ci');
+    cell.removeAttribute('data-id');
+    cell.removeAttribute('data-mp');
+    const statusBar = cell.querySelector('.status-bar');
+    if (statusBar) {
+        cell.removeChild(statusBar);
     }
 }
 
@@ -346,4 +371,15 @@ function logAction(message, nextTurn = false, subtext = false) {
 function clearLogs() {
     const logPanel = document.getElementById('log-panel');
     logPanel.innerHTML = '';
+}
+
+function intToColor(value, maxValue) { 
+    maxValue = Math.max(maxValue, 1);
+    value = Math.min(Math.max(value, 0), maxValue);
+    
+    const normalizedValue = value / maxValue;
+    
+    const gray = Math.round(255 * normalizedValue); 
+
+    return `rgb(${gray}, ${gray}, ${gray})`;
 }

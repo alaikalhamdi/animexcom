@@ -19,17 +19,18 @@ function generateGrid(length, width, mapData = null) {
                 item.setAttribute('data-health', cellData.health);
                 item.setAttribute('data-id', cellData.unitId);
                 item.setAttribute('data-ci', cellData.confectanceIndex);
+                item.setAttribute('data-sg', cellData.stabilityGauge);
                 const unitIdLabel = document.createElement('div');
                 unitIdLabel.classList.add('unit-id');
                 unitIdLabel.textContent = cellData.unitId;
                 item.appendChild(unitIdLabel);
                 item.setAttribute('data-mp', cellData.mp);
-                addHealthBar(item, cellData.health);
+                addStatusBar(item, cellData.health, cellData.stabilityGauge);
                 totalUnits++;
             } else if (cellData.enemy) {
                 item.classList.add('enemy');
                 item.setAttribute('data-health', cellData.health);
-                addHealthBar(item, cellData.health);
+                addStatusBar(item, cellData.health, cellData.stabilityGauge);
             } else if (cellData.obstacle) {
                 item.classList.add('obstacle');
                 if (cellData.coverType === 'full') {
@@ -177,7 +178,7 @@ function resetGrid() {
             'vault-start', 'vault-end', 
             'empty'
         );
-        removeHealthBar(item);
+        removeStatusBar(item);
         removeUnitId(item);
         removeVaultVisualCue(item);
     });
