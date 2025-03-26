@@ -22,7 +22,11 @@
         <button onclick="document.getElementById('importMapInput').click()">Import Map</button>
     </div>
     <div id="grid-details" class="grid-details"></div>
-    <div id="log-panel" class="log-panel"></div>
+    <div class="log-panel-container">
+        <div class="turn-display">Turn <span id="turn-counter">1</span></div>
+        <button id="log-panel-toggle" onclick="toggleLogPanel()">Toggle Log Panel</button>
+        <div id="log-panel" class="log-panel hidden"></div>
+    </div>
     <div class="viewport" id="viewport">
         <div class="grid-container" id="content"></div>
     </div>
@@ -55,7 +59,6 @@
     </div>
     <div class="bottom-menu">
         <div class="unit-details">
-            <div class="turn-display">T<span id="turn-counter">0</span></div>
             <div class="units-left-display">UC<span id="units-left-counter">0</span></div>
             <div class="units-left-list">UL<span id="units-left-list"></span></div>
         </div>

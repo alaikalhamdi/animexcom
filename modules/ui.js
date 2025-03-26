@@ -373,6 +373,11 @@ function clearLogs() {
     logPanel.innerHTML = '';
 }
 
+function toggleLogPanel() {
+    const logPanel = document.getElementById('log-panel');
+    logPanel.classList.toggle('hidden');
+}
+
 function intToColor(value, maxValue) { 
     maxValue = Math.max(maxValue, 1);
     value = Math.min(Math.max(value, 0), maxValue);

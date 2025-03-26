@@ -15,6 +15,9 @@ body {
     -ms-user-select: none;
     user-select: none;
 }
+.hidden {
+    display: none;
+}
 .viewport {
     width: 100vw;
     height: 100vh;
@@ -34,9 +37,12 @@ body {
     transform: translate(-50%, -50%) scale(1);
     transition: transform 0.1s ease-out;
 }
-.log-panel {
+.log-panel-container {
     position: absolute;
     left: 0;
+    z-index: 1;
+}
+.log-panel {
     height: 100px;
     background-color: rgba(0, 0, 0, 0.7);
     color: #eee;
