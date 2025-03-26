@@ -183,7 +183,8 @@ function resetGrid() {
         removeVaultVisualCue(item);
     });
     resetSkillCooldowns();
-    turn = 0;
+    turn = 1;
+    logAction(`Turn ${turn}`, true);
     totalUnits = 0;
     unitsMoved = 0;
     unitCounter = 0;

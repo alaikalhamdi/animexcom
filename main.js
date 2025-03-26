@@ -16,12 +16,13 @@ let unitsMoved = 0;
 let totalUnits = 0;
 let selectedUnit = null;
 let selectedEnemy = null;
-let turn = 0;
+let turn = 1;
 let movedUnits = new Set();
 let attackedUnits = new Set();
 let skippedUnits = new Set();
 let unitCounter = 0;
 generateGrid(GRID_LENGTH, GRID_WIDTH);
+logAction(`Turn ${turn}`, true);
 
 addObstacles();
 addSpawnPoints();
