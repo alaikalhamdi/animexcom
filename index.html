@@ -57,16 +57,15 @@
             <button onclick="closeModal()">Cancel</button>
         </div>
     </div>
-    <div class="bottom-menu">
-        <div class="unit-details">
-            
+    <div class="unit-details" id="unit-details"></div>
+    <div class="skills">
+        <button class="skip-turn-button" id="skip-turn-button" style="display: none;" onclick="skipTurn()">Skip Turn</button>
+        <div>
+            <button id="basic" class="skill-button">Skill 1<span id="basic-cooldown"></span></button>
+            <button id="heal" class="skill-button">Skill 2<span id="heal-cooldown"></span></button>
+            <button id="overwatch" class="skill-button">Skill 3<span id="overwatch-cooldown"></span></button>
+            <button id="aoeAttack" class="skill-button">Skill 4<span id="aoeAttack-cooldown"></span></button>
         </div>
-        <div class="skills">
-            <button id="heal" class="skill-button">Heal <span id="heal-cooldown"></span></button>
-            <button id="overwatch" class="skill-button">Overwatch <span id="overwatch-cooldown"></span></button>
-            <button id="aoeAttack" class="skill-button">AOE Attack <span id="aoeAttack-cooldown"></span></button>
-        </div>
-        <button class="skill-button" id="skip-turn-button" style="display: none;" onclick="skipTurn()">Skip Turn</button>
     </div>
     <script src="modules/enemies.js"></script>
     <script src="modules/extra.js"></script>

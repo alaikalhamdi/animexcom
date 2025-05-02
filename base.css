@@ -131,13 +131,6 @@ body {
     background-color: green !important;
     border: 1px dotted green;
 }
-.bottom-menu {
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    display: flex;
-    justify-content: space-between;
-}
 .top-menu {
     position: absolute;
     top: 0;
@@ -167,8 +160,37 @@ body {
     background-color: rgba(0, 0, 0, 0.5);
     padding: 2px;
 }
+.unit-details {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 5px;
+    font-size: 10px;
+    margin: 10px;
+}
 .skill-button {
     display: none;
+    height: 70px;
+    width: 70px;
+    word-break: break-all;
+    margin: 2px;
+}
+.skip-turn-button {
+    display: none;
+    margin: 10px 2px;
+    padding: 10px 20px;
+}
+.skills {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    font-size: 10px;
+    margin: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
 }
 .modal {
     position: fixed;

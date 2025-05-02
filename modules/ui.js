@@ -374,3 +374,19 @@ function intToColor(value, maxValue) {
 
     return `rgb(${gray}, ${gray}, ${gray})`;
 }
+
+function showUnitDetails(unit) {
+    const details = document.getElementById('unit-details');
+    details.innerHTML = `
+        <h3>Unit ${unit.getAttribute('data-id')}</h3>
+        <p>Health: ${unit.getAttribute('data-health')}</p>
+        <p>Stability Gauge: ${unit.getAttribute('data-sg')}</p>
+        <p>Confectance Index: ${unit.getAttribute('data-ci')}</p>
+        <p>Movement Points: ${unit.getAttribute('data-mp')}</p>
+    `;
+}
+
+function hideUnitDetails() {
+    const details = document.getElementById('unit-details');
+    details.innerHTML = '';
+}

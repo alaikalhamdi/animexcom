@@ -14,6 +14,7 @@ function cancelUnitSelection() {
         selectedUnit = null;
         selectedEnemy = null;
         console.log('Unit selection canceled');
+        hideUnitDetails();
         toggleButtons(false);
     }
 }
@@ -23,6 +24,7 @@ function selectUnit(item) {
         selectedUnit = item;
         item.classList.add('selected');
         console.log('Unit selected:', item);
+        showUnitDetails(item);
         highlightMoves(item);
         highlightAttackRange(item);
         toggleButtons(true);
