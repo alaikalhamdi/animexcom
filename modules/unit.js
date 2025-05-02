@@ -62,8 +62,6 @@ function moveUnit(unit, target) {
         movedUnits.add(target);
         attackedUnits.delete(unit); // Allow the unit to attack after moving
         unitsMoved++;
-        updateUnitsLeftDisplay();
-        updateUnitsLeftList();
         if (unitsMoved >= totalUnits) {
             nextTurn();
         }
@@ -116,8 +114,6 @@ function addUnitToSpawnPoint(spawnPoint) {
     console.log('Unit added at', spawnPoint);
     totalUnits++;
     unitCounter++;
-    updateUnitsLeftDisplay();
-    updateUnitsLeftList();
     spawnPoint.classList.remove('spawn-point');
     spawnPoints = spawnPoints.filter(point => point !== spawnPoint);
 }
@@ -178,8 +174,6 @@ function skipTurn() {
         movedUnits.add(selectedUnit);
         skippedUnits.add(selectedUnit);
         unitsMoved++;
-        updateUnitsLeftDisplay();
-        updateUnitsLeftList();
         if (unitsMoved >= totalUnits) {
             nextTurn();
         }

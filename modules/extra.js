@@ -10,8 +10,6 @@ function nextTurn() {
     skippedUnits.clear();
     replenishMovementPoints();
     updateTurnDisplay();
-    updateUnitsLeftDisplay();
-    updateUnitsLeftList();
     console.log('Turn', turn);
     logAction(`Turn ${turn}`, true);
     moveEnemies();

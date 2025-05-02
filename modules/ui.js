@@ -142,20 +142,6 @@ function updateTurnDisplay() {
     document.getElementById('turn-counter').textContent = turn;
 }
 
-function updateUnitsLeftDisplay() {
-    const unitsLeft = totalUnits - unitsMoved;
-    document.getElementById('units-left-counter').textContent = unitsLeft;
-}
-
-function updateUnitsLeftList() {
-    const unitsLeftList = document.getElementById('units-left-list');
-    const unitsLeft = Array.from(document.querySelectorAll('.grid-item.unit'))
-        .filter(unit => !movedUnits.has(unit))
-        .map(unit => unit.getAttribute('data-id'))
-        .join(', ');
-    unitsLeftList.textContent = unitsLeft;
-}
-
 function checkVictoryCondition() {
     const enemies = document.querySelectorAll('.grid-item.enemy');
     if (enemies.length === 0) {

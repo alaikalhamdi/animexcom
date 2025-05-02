@@ -23,12 +23,8 @@ function removeItem(item) {
     if (item.classList.contains('unit')) {
         unitCounter--;
         totalUnits--;
-        updateUnitsLeftDisplay();
-        updateUnitsLeftList();
     }
     item.classList.remove('unit', 'enemy', 'obstacle', 'full-cover', 'partial-cover', 'spawn-point', 'vault-start', 'vault-end', 'empty');
-    updateUnitsLeftDisplay();
-    updateUnitsLeftList();
     removeStatusBar(item);
     removeUnitId(item);
     removeVaultVisualCue(item);
@@ -59,8 +55,6 @@ function selectItemType(type, direction, obstacleType) {
         selectedItem.appendChild(unitIdLabel);
         totalUnits++;
         unitCounter++;
-        updateUnitsLeftDisplay();
-        updateUnitsLeftList();
     } else if (type === 'enemy') {
         selectedItem.classList.add('enemy');
         selectedItem.setAttribute('data-health', enemyHealth);

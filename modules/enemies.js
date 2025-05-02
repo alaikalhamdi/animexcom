@@ -61,7 +61,6 @@ function attackUnit(enemy, unit) {
         removeStatusBar(unit);
         removeUnitId(unit);
         totalUnits--;
-        updateUnitsLeftDisplay();
         checkDefeatCondition();
     } else {
         updateHealthBar(unit, unitHealth);

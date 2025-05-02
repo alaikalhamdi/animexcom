@@ -51,7 +51,6 @@ function generateGrid(length, width, mapData = null) {
                 createVaultVisualCue(item, cellData.vaultDirection, true);
             }
         });
-        updateUnitsLeftDisplay();
     }
 }
 
@@ -195,8 +194,6 @@ function resetGrid() {
     toggleButtons(false);
     clearAttackLine();
     updateTurnDisplay();
-    updateUnitsLeftDisplay();
-    updateUnitsLeftList();
     clearHighlights();
     console.log('Grid reset');
     if (!mapBuilderMode) {
